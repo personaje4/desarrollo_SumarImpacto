@@ -1,0 +1,42 @@
+[
+  {
+    "idProyecto": 1,
+    "nombre": "Comedor Comunitario San José",
+    "descripcion": "Brindar alimentación a personas en situación de vulnerabilidad en la comunidad.",
+    "ubicacion": "Calle San Martín 123, Tigre, Buenos Aires",
+    "categoria": "Alimentación",
+    "presupuestoObjetivo": 50000,
+    "moneda": "ARS",
+    "fechaInicio": "2024-01-15",
+    "fechaFin": " ",
+    "estado": "En ejecución",
+    "responsable": "María López"
+  },
+  {
+    "idProyecto": 2,
+    "nombre": "Taller de Alfabetización Digital",
+    "descripcion": "Capacitar a adultos mayores en el uso de herramientas digitales para mejorar su calidad de vida.",
+    "ubicacion": "Los Álamos 456, Morón, Buenos Aires",
+    "categoria": "Educación",
+    "presupuestoObjetivo": 30000,
+    "moneda": "ARS",
+    "fechaInicio":"2026-08-01",
+    "fechaFin": " ",
+    "estado": "Planificación",
+    "responsable": "Juan Pérez"
+  },
+  {
+    "idProyecto": 3,
+    "nombre": "Colecta de Abrigo 2026",
+    "descripcion": "Recolectar y distribuir abrigos a personas en situación de vulnerabilidad.",
+    "ubicacion": "Av. Rivadavia 789, La Plata, Buenos Aires",
+    "categoria": "Asistencia Directa",
+    "presupuestoObjetivo": 20000,
+    "moneda": "ARS",
+    "fechaInicio": "2026-06-01",
+    "fechaFin": "2026-07-15",
+    "estado": "Finalizado",
+    "responsable": "Laura Gómez"    
+  }
+]
+

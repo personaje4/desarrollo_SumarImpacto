@@ -1,0 +1,39 @@
+
+[
+  {
+    "idDonante": 1,
+    "razonSocial": "Tech Solutions S.A.",
+    "cuit": "30-12345678-9",
+    "rubro": "Tecnología",
+    "personaContacto": "Carlos Fernández",
+    "emailContacto": "carlos.fernandez@techsolutions.com",
+    "montoTotalDonado": 500000,
+    "moneda": "ARS",
+    "proyectoAsignadoId": 2,
+    "estado": "Activo"
+  },
+  {
+    "idDonante": 2,
+    "razonSocial": "Banco del Sur",
+    "cuit": "30-98765432-1",
+    "rubro": "Finanzas",
+    "personaContacto": "Ana Martínez",
+    "emailContacto": "ana.martinez@bancodelsur.com",
+    "montoTotalDonado": 1200000,
+    "moneda": "ARS",
+    "proyectoAsignadoId": 1,
+    "estado": "Activo"
+  },
+  {
+    "idDonante": 3,
+    "razonSocial": "Logística Red S.A.",
+    "cuit": "30-11223344-5",
+    "rubro": "Transporte y Logística",
+    "personaContacto": "Luis Rodríguez",
+    "emailContacto": "luis.rodriguez@logisticared.com",
+    "montoTotalDonado": 350000,
+    "moneda": "ARS",
+    "proyectoAsignadoId": 3,
+    "estado": "Inactivo"
+  }
+]
