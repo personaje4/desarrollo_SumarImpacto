@@ -62,12 +62,15 @@ const actualizarProyecto = (req, res) => {
         });
     }
 
-    const { nombre, descripcion, fechaInicio, fechaFin, estado } = req.body;
+    const { nombre, descripcion, organizacion, fechaInicio, fechaFin, estado, responsable, email_responsable} = req.body;
     proyectos[proyectoIndex].nombre = nombre ?? proyectos[proyectoIndex].nombre;
     proyectos[proyectoIndex].descripcion = descripcion ?? proyectos[proyectoIndex].descripcion;
+    proyectos[proyectoIndex].organizacion = organizacion ?? proyectos[proyectoIndex].organizacion;
     proyectos[proyectoIndex].fechaInicio = fechaInicio ?? proyectos[proyectoIndex].fechaInicio;
     proyectos[proyectoIndex].fechaFin = fechaFin ?? proyectos[proyectoIndex].fechaFin;
     proyectos[proyectoIndex].estado = estado ?? proyectos[proyectoIndex].estado;
+    proyectos[proyectoIndex].responsable = responsable ?? proyectos[proyectoIndex].responsable;
+    proyectos[proyectoIndex].email_responsable = email_responsable ?? proyectos[proyectoIndex].email_responsable;
 
     guardarProyectos(proyectos);
     res.json({

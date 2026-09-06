@@ -4,13 +4,16 @@ const path = require('path');
 const rutaArchivoProyecto = path.join(__dirname, '../data/proyectos.json');
 
 class Proyecto {
-    constructor(idProyecto, nombre, descripcion, fechaInicio, fechaFin, estado) {
+    constructor(idProyecto, nombre, organizacion,descripcion, fechaInicio, fechaFin, estado, responsable, email_responsable) {
         this.idProyecto = idProyecto;
         this.nombre = nombre;
+        this.organizacion = organizacion;
         this.descripcion = descripcion;
         this.fechaInicio = fechaInicio;
         this.fechaFin = fechaFin;
         this.estado = estado;
+        this.responsable = responsable;
+        this.email_responsable = email_responsable;
     }
 }
 

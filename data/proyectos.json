@@ -2,6 +2,7 @@
   {
     "idProyecto": 1,
     "nombre": "Comedor Comunitario San José",
+    "organizacion": "Asociación Civil San José",
     "descripcion": "Brindar alimentación a personas en situación de vulnerabilidad en la comunidad.",
     "ubicacion": "Calle San Martín 123, Tigre, Buenos Aires",
     "categoria": "Alimentación",
@@ -10,11 +11,13 @@
     "fechaInicio": "2024-01-15",
     "fechaFin": " ",
     "estado": "En ejecución",
-    "responsable": "María López"
+    "responsable": "María López",
+    "email_responsable": "maria.lopez@gmail.com"
   },
   {
     "idProyecto": 2,
     "nombre": "Taller de Alfabetización Digital",
+    "organizacion": "Fundación Digital para Todos",
     "descripcion": "Capacitar a adultos mayores en el uso de herramientas digitales para mejorar su calidad de vida.",
     "ubicacion": "Los Álamos 456, Morón, Buenos Aires",
     "categoria": "Educación",
@@ -23,11 +26,13 @@
     "fechaInicio":"2026-08-01",
     "fechaFin": " ",
     "estado": "Planificación",
-    "responsable": "Juan Pérez"
+    "responsable": "Juan Pérez",
+    "email_responsable": "juan.perez@gmail.com"
   },
   {
     "idProyecto": 3,
     "nombre": "Colecta de Abrigo 2026",
+    "organizacion": "Fundación Abrigo Solidario",
     "descripcion": "Recolectar y distribuir abrigos a personas en situación de vulnerabilidad.",
     "ubicacion": "Av. Rivadavia 789, La Plata, Buenos Aires",
     "categoria": "Asistencia Directa",
@@ -36,7 +41,8 @@
     "fechaInicio": "2026-06-01",
     "fechaFin": "2026-07-15",
     "estado": "Finalizado",
-    "responsable": "Laura Gómez"    
+    "responsable": "Laura Gómez",
+    "email_responsable": "laura.gomez@gmail.com"
   }
 ]
 

@@ -1,6 +1,6 @@
 class DonanteCorporativo {
-    constructor(idDonante,razonSocial, cuit, rubro, personaContacto, emailContacto, montoTotalDonado, moneda, proyectoAsignadoId, estado) {
-        this.idDonante = idDonante;
+    constructor(idDonanteCorporativo,razonSocial, cuit, rubro, personaContacto, emailContacto, montoTotalDonado, moneda, proyectoAsignadoId, estado) {
+        this.idDonanteCorporativo = idDonanteCorporativo;
         this.razonSocial = razonSocial;
         this.cuit = cuit;
         this.rubro = rubro;

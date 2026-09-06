@@ -26,8 +26,8 @@ const obtenerDonanteCorporativo = (req, res) => {
 // GET BY ID
 const obtenerDonanteCorporativoPorId = (req, res) => {
     const donantes = leerDonanteCorporativo();
-    const id = parseInt(req.params.idDonante, 10);
-    const donante = donantes.find((d) => d.id === id || d.idDonante === id);  
+    const id = parseInt(req.params.idDonanteCorporativo, 10);
+    const donante = donantes.find((d) => d.id === id || d.idDonanteCorporativo === id);  
 
     if (!donante) {
         return res.status(404).json({ message: 'Donante corporativo no encontrado' });
@@ -38,10 +38,10 @@ const obtenerDonanteCorporativoPorId = (req, res) => {
 // CREATE
 const crearDonanteCorporativo = (req, res) => {
     const donantes = leerDonanteCorporativo();
-    const { idDonante, razonSocial, cuit, rubro, personaContacto, emailContacto, montoTotalDonado, moneda, proyectoAsignadoId, estado } = req.body;
+    const { idDonanteCorporativo, razonSocial, cuit, rubro, personaContacto, emailContacto, montoTotalDonado, moneda, proyectoAsignadoId, estado } = req.body;
     
     const nuevoDonante = {
-        idDonante: idDonante || Date.now(),
+        idDonanteCorporativo: idDonanteCorporativo || Date.now(),
         razonSocial,
         cuit,
         rubro,
@@ -64,8 +64,8 @@ const crearDonanteCorporativo = (req, res) => {
 // UPDATE
 const actualizarDonanteCorporativo = (req, res) => {
     const donantes = leerDonanteCorporativo();
-    const id = parseInt(req.params.idDonante, 10);
-    const donanteIndex = donantes.findIndex((d) => d.id === id || d.idDonante === id);    
+    const id = parseInt(req.params.idDonanteCorporativo, 10);
+    const donanteIndex = donantes.findIndex((d) => d.id === id || d.idDonanteCorporativo === id);    
 
     if (donanteIndex === -1) {
         return res.status(404).json({ 
@@ -74,9 +74,9 @@ const actualizarDonanteCorporativo = (req, res) => {
     }
 
     const donante = donantes[donanteIndex];
-    const { idDonante, razonSocial, cuit, rubro, personaContacto, emailContacto, montoTotalDonado, moneda, proyectoAsignadoId, estado } = req.body;
+    const { idDonanteCorporativo, razonSocial, cuit, rubro, personaContacto, emailContacto, montoTotalDonado, moneda, proyectoAsignadoId, estado } = req.body;
     
-    donante.idDonante = idDonante ?? donante.idDonante;
+    donante.idDonanteCorporativo = idDonanteCorporativo ?? donante.idDonanteCorporativo;
     donante.razonSocial = razonSocial ?? donante.razonSocial;
     donante.cuit = cuit ?? donante.cuit;
     donante.rubro = rubro ?? donante.rubro;
@@ -97,8 +97,8 @@ const actualizarDonanteCorporativo = (req, res) => {
 // DELETE
 const eliminarDonanteCorporativo = (req, res) => {
     const donantes = leerDonanteCorporativo();
-    const id = parseInt(req.params.idDonante, 10);
-    const nuevosDonantes = donantes.filter((d) => d.id !== id && d.idDonante !== id);
+    const id = parseInt(req.params.idDonanteCorporativo, 10);
+    const nuevosDonantes = donantes.filter((d) => d.id !== id && d.idDonanteCorporativo !== id);
 
     if (donantes.length === nuevosDonantes.length) {
         return res.status(404).json({ 
