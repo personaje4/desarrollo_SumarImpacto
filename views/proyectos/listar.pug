@@ -1,0 +1,41 @@
+doctype html
+html(lang="es")
+  head
+    meta(charset="UTF-8")
+    title Proyectos - SumarImpacto
+  body
+    h1 Listado de Proyectos Solidarios
+    p
+      a(href="/proyecto/nuevo") + Registrar Nuevo Proyecto
+    p
+      a(href="/proyecto/eliminar") - Eliminar un Proyecto
+    p
+      a(href="/") ← Volver al Inicio
+
+    if proyectos && proyectos.length > 0
+      table(border="1" cellpadding="5" cellspacing="0")
+        thead
+          tr
+            th ID
+            th Nombre
+            th Descripción
+            th Organización
+            th Responsable
+            th Email Responsable
+            th Fecha Inicio
+            th Fecha Fin
+            th Estado
+        tbody
+          each p in proyectos
+            tr
+              td= p.id || p.idProyecto
+              td= p.nombre
+              td= p.descripcion
+              td= p.organizacion
+              td= p.responsable
+              td= p.email_responsable
+              td= p.fechaInicio
+              td= p.fechaFin
+              td= p.estado
+    else
+      p No hay proyectos registrados actualmente.

@@ -1,0 +1,43 @@
+doctype html
+html(lang="es")
+  head
+    meta(charset="UTF-8")
+    title Donantes Corporativos - SumarImpacto
+  body
+    h1 Listado de Donantes Corporativos
+    p
+      a(href="/donanteCorporativo/nuevo") + Registrar Nuevo Donante
+    p
+      a(href="/donanteCorporativo/eliminar") - Eliminar un Donante
+    p
+      a(href="/") ← Volver al Inicio
+
+    if donantes && donantes.length > 0
+      table(border="1" cellpadding="5" cellspacing="0")
+        thead
+          tr
+            th ID
+            th Razón Social
+            th CUIT
+            th Rubro
+            th Persona de Contacto
+            th Email Contacto
+            th Monto Donado
+            th Moneda
+            th Proyecto Asignado ID
+            th Estado
+        tbody
+          each d in donantes
+            tr
+              td= d.idDonanteCorporativo
+              td= d.razonSocial
+              td= d.cuit
+              td= d.rubro
+              td= d.personaContacto
+              td= d.emailContacto
+              td= d.montoTotalDonado
+              td= d.moneda
+              td= d.proyectoAsignadoId
+              td= d.estado
+    else
+      p No hay donantes corporativos registrados actualmente.

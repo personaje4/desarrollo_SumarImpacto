@@ -1,0 +1,48 @@
+doctype html
+html(lang="es")
+  head
+    meta(charset="UTF-8")
+    title Nuevo Proyecto - SumarImpacto
+  body
+    h1 Registrar Nuevo Proyecto Solidario
+    form(action="/proyecto" method="POST")
+      div
+        label(for="nombre") Nombre del Proyecto: 
+        input(type="text" id="nombre" name="nombre" required)
+      br
+      div
+        label(for="descripcion") Descripción: 
+        textarea(id="descripcion" name="descripcion" required)
+      br
+      div
+        label(for="organizacion") Organización Responsable: 
+        input(type="text" id="organizacion" name="organizacion" required)
+      br
+      div
+        label(for="responsable") Responsable: 
+        input(type="text" id="responsable" name="responsable" required)
+      br
+      div
+        label(for="email_responsable") Email Responsable: 
+        input(type="email" id="email_responsable" name="email_responsable" required)
+      br
+      div
+        label(for="fechaInicio") Fecha de Inicio: 
+        input(type="date" id="fechaInicio" name="fechaInicio" required)
+      br
+      div
+        label(for="fechaFin") Fecha de Finalización: 
+        input(type="date" id="fechaFin" name="fechaFin" required)
+      br
+      div
+        label(for="estado") Estado: 
+        select(id="estado" name="estado")
+          option(value="pendiente") Pendiente
+          option(value="activo" selected) Activo
+          option(value="finalizado") Finalizado
+          option(value="cancelado") Cancelado
+      br
+      div
+        button(type="submit") Guardar Proyecto
+    p
+      a(href="/proyecto") Volver al listado

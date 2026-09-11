@@ -1,0 +1,16 @@
+doctype html
+html(lang="es")
+  head
+    meta(charset="UTF-8")
+    title Eliminar Proyecto - SumarImpacto
+  body
+    h1 Eliminar Proyecto Solidario
+    form(action="/proyecto/eliminar" method="POST" onsubmit="return confirm('¿Seguro que deseas eliminar este proyecto?');")
+      div
+        label(for="idProyecto") ID del Proyecto a eliminar: 
+        input(type="number" id="idProyecto" name="idProyecto" required placeholder="Ej: 1")
+      br
+      div
+        button(type="submit") Eliminar Proyecto
+    p
+      a(href="/proyecto") ← Volver al listado

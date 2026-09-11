@@ -1,0 +1,16 @@
+doctype html
+html(lang="es")
+  head
+    meta(charset="UTF-8")
+    title Eliminar Donante - SumarImpacto
+  body
+    h1 Eliminar Donante Corporativo
+    form(action="/donanteCorporativo/eliminar" method="POST" onsubmit="return confirm('¿Seguro que deseas eliminar este donante?');")
+      div
+        label(for="idDonante") ID del Donante a eliminar: 
+        input(type="number" id="idDonante" name="idDonante" required placeholder="Ej: 1")
+      br
+      div
+        button(type="submit") Eliminar Donante
+    p
+      a(href="/donanteCorporativo") ← Volver al listado
