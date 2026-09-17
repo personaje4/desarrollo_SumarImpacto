@@ -5,8 +5,6 @@ const PORT = 3000;
 const proyectoRoutes = require("./routes/proyectoRoutes");
 const donanteCorporativoRoutes = require("./routes/donanteCorporativoRoutes");
 
-app.use(express.json());
-
 // Middleware para procesar JSON y formularios HTML
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

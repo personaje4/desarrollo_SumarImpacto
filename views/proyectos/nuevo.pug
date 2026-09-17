@@ -7,42 +7,73 @@ html(lang="es")
     h1 Registrar Nuevo Proyecto Solidario
     form(action="/proyecto" method="POST")
       div
-        label(for="nombre") Nombre del Proyecto: 
+        label(for="nombre") Nombre del Proyecto:
         input(type="text" id="nombre" name="nombre" required)
       br
+
       div
-        label(for="descripcion") Descripción: 
+        label(for="descripcion") Descripción:
         textarea(id="descripcion" name="descripcion" required)
       br
+
       div
-        label(for="organizacion") Organización Responsable: 
+        label(for="organizacion") Organización Responsable:
         input(type="text" id="organizacion" name="organizacion" required)
       br
+
       div
-        label(for="responsable") Responsable: 
+        label(for="ubicacion") Ubicación:
+        input(type="text" id="ubicacion" name="ubicacion" required)
+      br
+
+      div
+        label(for="categoria") Categoría:
+        input(type="text" id="categoria" name="categoria" required)
+      br
+
+      div
+        label(for="presupuestoObjetivo") Presupuesto Objetivo:
+        input(type="number" id="presupuestoObjetivo" name="presupuestoObjetivo" min="0" required)
+      br
+
+      div
+        label(for="moneda") Moneda:
+        select(id="moneda" name="moneda" required)
+          option(value="ARS" selected) ARS
+          option(value="USD") USD
+      br
+
+      div
+        label(for="responsable") Responsable:
         input(type="text" id="responsable" name="responsable" required)
       br
+
       div
-        label(for="email_responsable") Email Responsable: 
+        label(for="email_responsable") Email Responsable:
         input(type="email" id="email_responsable" name="email_responsable" required)
       br
+
       div
-        label(for="fechaInicio") Fecha de Inicio: 
+        label(for="fechaInicio") Fecha de Inicio:
         input(type="date" id="fechaInicio" name="fechaInicio" required)
       br
+
       div
-        label(for="fechaFin") Fecha de Finalización: 
+        label(for="fechaFin") Fecha de Finalización:
         input(type="date" id="fechaFin" name="fechaFin" required)
       br
+
       div
-        label(for="estado") Estado: 
+        label(for="estado") Estado:
         select(id="estado" name="estado")
           option(value="pendiente") Pendiente
           option(value="activo" selected) Activo
           option(value="finalizado") Finalizado
           option(value="cancelado") Cancelado
       br
+
       div
         button(type="submit") Guardar Proyecto
+
     p
       a(href="/proyecto") Volver al listado
