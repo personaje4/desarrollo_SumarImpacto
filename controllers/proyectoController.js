@@ -1,6 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 
+const { Proyecto } = require('../models/proyectoManager');
+
 const rutaArchivoProyecto = path.join(__dirname, '../data/proyectos.json');
 
 // función leer archivo
@@ -20,11 +22,11 @@ const guardarProyectos = (proyectos) => {
 // GET ALL
 const obtenerProyecto = (req, res) => {
     const proyectos = leerProyectos();
-    
+
     if (req.accepts('html')) {
         return res.render('proyectos/listar', { proyectos });
     }
-    
+
     res.json(proyectos);
 };
 
@@ -44,23 +46,27 @@ const obtenerProyectoPorId = (req, res) => {
 // CREATE (Secuencia numérica automática)
 const crearProyecto = (req, res) => {
     const proyectos = leerProyectos();
-    
+
     const ultimoId = proyectos.reduce((max, p) => {
         const idActual = Number(p.id || p.idProyecto || 0);
         return idActual > max ? idActual : max;
     }, 0);
 
-    const nuevoProyecto = {
-        idProyecto: req.body.idProyecto ? Number(req.body.idProyecto) : ultimoId + 1,
-        nombre: req.body.nombre,
-        descripcion: req.body.descripcion,
-        organizacion: req.body.organizacion,
-        responsable: req.body.responsable,
-        email_responsable: req.body.email_responsable,
-        fechaInicio: req.body.fechaInicio,
-        fechaFin: req.body.fechaFin,
-        estado: req.body.estado || 'activo'
-    };
+    const nuevoProyecto = new Proyecto(
+        req.body.idProyecto ? Number(req.body.idProyecto) : ultimoId + 1,
+        req.body.nombre,
+        req.body.organizacion,
+        req.body.descripcion,
+        req.body.ubicacion,
+        req.body.categoria,
+        Number(req.body.presupuestoObjetivo),
+        req.body.moneda,
+        req.body.fechaInicio,
+        req.body.fechaFin,
+        req.body.estado || 'activo',
+        req.body.responsable,
+        req.body.email_responsable
+    );
 
     proyectos.push(nuevoProyecto);
     guardarProyectos(proyectos);
@@ -82,20 +88,63 @@ const actualizarProyecto = (req, res) => {
     const proyectoIndex = proyectos.findIndex((p) => p.id === id || p.idProyecto === id);
 
     if (proyectoIndex === -1) {
-        return res.status(404).json({ 
+        return res.status(404).json({
             mensaje: 'Proyecto no encontrado'
         });
     }
 
-    const { nombre, descripcion, organizacion, fechaInicio, fechaFin, estado, responsable, email_responsable } = req.body;
-    proyectos[proyectoIndex].nombre = nombre ?? proyectos[proyectoIndex].nombre;
-    proyectos[proyectoIndex].descripcion = descripcion ?? proyectos[proyectoIndex].descripcion;
-    proyectos[proyectoIndex].organizacion = organizacion ?? proyectos[proyectoIndex].organizacion;
-    proyectos[proyectoIndex].fechaInicio = fechaInicio ?? proyectos[proyectoIndex].fechaInicio;
-    proyectos[proyectoIndex].fechaFin = fechaFin ?? proyectos[proyectoIndex].fechaFin;
-    proyectos[proyectoIndex].estado = estado ?? proyectos[proyectoIndex].estado;
-    proyectos[proyectoIndex].responsable = responsable ?? proyectos[proyectoIndex].responsable;
-    proyectos[proyectoIndex].email_responsable = email_responsable ?? proyectos[proyectoIndex].email_responsable;
+    const {
+        nombre,
+        descripcion,
+        organizacion,
+        ubicacion,
+        categoria,
+        presupuestoObjetivo,
+        moneda,
+        fechaInicio,
+        fechaFin,
+        estado,
+        responsable,
+        email_responsable
+    } = req.body;
+
+    proyectos[proyectoIndex].nombre =
+        nombre ?? proyectos[proyectoIndex].nombre;
+
+    proyectos[proyectoIndex].descripcion =
+        descripcion ?? proyectos[proyectoIndex].descripcion;
+
+    proyectos[proyectoIndex].organizacion =
+        organizacion ?? proyectos[proyectoIndex].organizacion;
+
+    proyectos[proyectoIndex].ubicacion =
+        ubicacion ?? proyectos[proyectoIndex].ubicacion;
+
+    proyectos[proyectoIndex].categoria =
+        categoria ?? proyectos[proyectoIndex].categoria;
+
+    proyectos[proyectoIndex].presupuestoObjetivo =
+        presupuestoObjetivo !== undefined
+            ? Number(presupuestoObjetivo)
+            : proyectos[proyectoIndex].presupuestoObjetivo;
+
+    proyectos[proyectoIndex].moneda =
+        moneda ?? proyectos[proyectoIndex].moneda;
+
+    proyectos[proyectoIndex].fechaInicio =
+        fechaInicio ?? proyectos[proyectoIndex].fechaInicio;
+
+    proyectos[proyectoIndex].fechaFin =
+        fechaFin ?? proyectos[proyectoIndex].fechaFin;
+
+    proyectos[proyectoIndex].estado =
+        estado ?? proyectos[proyectoIndex].estado;
+
+    proyectos[proyectoIndex].responsable =
+        responsable ?? proyectos[proyectoIndex].responsable;
+
+    proyectos[proyectoIndex].email_responsable =
+        email_responsable ?? proyectos[proyectoIndex].email_responsable;
 
     guardarProyectos(proyectos);
     res.json({
@@ -131,5 +180,5 @@ module.exports = {
     obtenerProyectoPorId,
     crearProyecto,
     actualizarProyecto,
-    eliminarProyecto    
+    eliminarProyecto
 };

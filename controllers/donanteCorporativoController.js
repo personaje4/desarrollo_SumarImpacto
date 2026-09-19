@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const DonanteCorporativo = require('../models/donanteCorporativoManager');
 
 const rutaArchivoDonanteCorporativo = path.join(__dirname, '../data/donanteCorporativo.json');
 
@@ -12,7 +13,7 @@ const leerDonanteCorporativo = () => {
 // Función guardar archivo
 const guardarDonanteCorporativo = (donantes) => {
     fs.writeFileSync(
-        rutaArchivoDonanteCorporativo,    
+        rutaArchivoDonanteCorporativo,
         JSON.stringify(donantes, null, 2)
     );
 };
@@ -25,46 +26,49 @@ const obtenerDonanteCorporativo = (req, res) => {
         return res.render('donantes/listar', { donantes });
     }
 
-    res.json(donantes); 
+    res.json(donantes);
 };
 
 // GET BY ID
 const obtenerDonanteCorporativoPorId = (req, res) => {
     const donantes = leerDonanteCorporativo();
     const id = parseInt(req.params.idDonante || req.params.idDonanteCorporativo, 10);
-    const donante = donantes.find((d) => d.id === id || d.idDonanteCorporativo === id);  
+    const donante = donantes.find((d) => d.id === id || d.idDonanteCorporativo === id);
 
     if (!donante) {
         return res.status(404).json({ message: 'Donante corporativo no encontrado' });
     }
-    res.json(donante);  
+    res.json(donante);
 };
 
 // CREATE (Secuencia numérica automática)
 const crearDonanteCorporativo = (req, res) => {
     const donantes = leerDonanteCorporativo();
-    
+
     const ultimoId = donantes.reduce((max, d) => {
         const idActual = Number(d.id || d.idDonanteCorporativo || 0);
         return idActual > max ? idActual : max;
     }, 0);
 
     const { idDonanteCorporativo, razonSocial, cuit, rubro, personaContacto, emailContacto, montoTotalDonado, moneda, proyectoAsignadoId, estado } = req.body;
-    
-    const nuevoDonante = {
-        idDonanteCorporativo: idDonanteCorporativo ? Number(idDonanteCorporativo) : ultimoId + 1,
+
+    const nuevoDonante = new DonanteCorporativo(
+        idDonanteCorporativo
+            ? Number(idDonanteCorporativo)
+            : ultimoId + 1,
         razonSocial,
         cuit,
         rubro,
         personaContacto,
         emailContacto,
-        montoTotalDonado,
+        Number(montoTotalDonado),
         moneda,
-        proyectoAsignadoId,
-        estado: estado || 'activo'
-    };
+        Number(proyectoAsignadoId),
+        estado || 'activo'
+    );
 
-    donantes.push(nuevoDonante); 
+
+    donantes.push(nuevoDonante);
     guardarDonanteCorporativo(donantes);
 
     if (req.accepts('html')) {
@@ -73,7 +77,7 @@ const crearDonanteCorporativo = (req, res) => {
 
     res.status(201).json({
         mensaje: 'Donante corporativo creado',
-        donante: nuevoDonante  
+        donante: nuevoDonante
     });
 };
 
@@ -81,32 +85,57 @@ const crearDonanteCorporativo = (req, res) => {
 const actualizarDonanteCorporativo = (req, res) => {
     const donantes = leerDonanteCorporativo();
     const id = parseInt(req.params.idDonante || req.params.idDonanteCorporativo, 10);
-    const donanteIndex = donantes.findIndex((d) => d.id === id || d.idDonanteCorporativo === id);    
+    const donanteIndex = donantes.findIndex((d) => d.id === id || d.idDonanteCorporativo === id);
 
     if (donanteIndex === -1) {
-        return res.status(404).json({ 
-            mensaje: 'Donante corporativo no encontrado' 
+        return res.status(404).json({
+            mensaje: 'Donante corporativo no encontrado'
         });
     }
 
     const donante = donantes[donanteIndex];
     const { idDonanteCorporativo, razonSocial, cuit, rubro, personaContacto, emailContacto, montoTotalDonado, moneda, proyectoAsignadoId, estado } = req.body;
-    
-    donante.idDonanteCorporativo = idDonanteCorporativo ?? donante.idDonanteCorporativo;
-    donante.razonSocial = razonSocial ?? donante.razonSocial;
-    donante.cuit = cuit ?? donante.cuit;
-    donante.rubro = rubro ?? donante.rubro;
-    donante.personaContacto = personaContacto ?? donante.personaContacto;
-    donante.emailContacto = emailContacto ?? donante.emailContacto;
-    donante.montoTotalDonado = montoTotalDonado ?? donante.montoTotalDonado;
-    donante.moneda = moneda ?? donante.moneda;
-    donante.proyectoAsignadoId = proyectoAsignadoId ?? donante.proyectoAsignadoId;
-    donante.estado = estado ?? donante.estado;
+
+    donante.idDonanteCorporativo =
+    idDonanteCorporativo !== undefined
+        ? Number(idDonanteCorporativo)
+        : donante.idDonanteCorporativo;
+
+    donante.razonSocial =
+        razonSocial ?? donante.razonSocial;
+
+    donante.cuit =
+        cuit ?? donante.cuit;
+
+    donante.rubro =
+        rubro ?? donante.rubro;
+
+    donante.personaContacto =
+        personaContacto ?? donante.personaContacto;
+
+    donante.emailContacto =
+        emailContacto ?? donante.emailContacto;
+
+    donante.montoTotalDonado =
+        montoTotalDonado !== undefined
+            ? Number(montoTotalDonado)
+            : donante.montoTotalDonado;
+
+    donante.moneda =
+        moneda ?? donante.moneda;
+
+    donante.proyectoAsignadoId =
+        proyectoAsignadoId !== undefined
+            ? Number(proyectoAsignadoId)
+            : donante.proyectoAsignadoId;
+
+    donante.estado =
+        estado ?? donante.estado;
 
     guardarDonanteCorporativo(donantes);
-    res.json({ 
-        mensaje: 'Donante corporativo actualizado', 
-        donante 
+    res.json({
+        mensaje: 'Donante corporativo actualizado',
+        donante
     });
 };
 
