@@ -1,65 +1,7 @@
-import mongoose from "mongoose";
+const fs = require('fs');
+const path = require('path');
 
-const proyectoSchema = new mongoose.Schema({
-    idProyecto: {
-        type: Number,
-        required: true,
-        unique: true
-    },
-    nombre: {
-        type: String,
-        required: true
-    },
-    organizacion: {
-        type: String,
-        required: true
-    },
-    descripcion: {
-        type: String,
-        required: true
-    },
-    ubicacion: {
-        type: String,
-        required: true
-    },
-    categoria: {
-        type: String,
-        required: true
-    },
-    presupuestoObjetivo: {
-        type: Number,
-        required: true
-    },
-    moneda: {
-        type: String,
-        required: true
-    },
-    fechaInicio:{ 
-        type: Date, 
-        required: true 
-    },
-    fechaFin: {
-        type: Date, 
-        required: true 
-    },
-    estado: { 
-        type: String, 
-        required: true 
-    },
-    responsable: { 
-        type: String, 
-        required: true 
-    },
-    email_responsable: { 
-        type: String, 
-        required: true 
-    }
-},{
-    timestamps: true
-});
-export default mongoose.model("Proyecto", proyectoSchema);
-
-/*const Proyecto = mongoose.model('Proyecto', proyectoSchema);
+const rutaArchivoProyecto = path.join(__dirname, '../data/proyectos.json');
 
 class Proyecto {
     constructor(
@@ -113,4 +55,4 @@ class ProyectoManager {
     }
 }
 
-module.exports = { Proyecto, ProyectoManager };*/
+module.exports = { Proyecto, ProyectoManager };
