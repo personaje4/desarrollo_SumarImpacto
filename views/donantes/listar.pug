@@ -29,7 +29,7 @@ html(lang="es")
         tbody
           each d in donantes
             tr
-              td= d.idDonanteCorporativo
+              td= d._id
               td= d.razonSocial
               td= d.cuit
               td= d.rubro
@@ -37,7 +37,7 @@ html(lang="es")
               td= d.emailContacto
               td= d.montoTotalDonado
               td= d.moneda
-              td= d.proyectoAsignadoId
+              td= d.proyectoAsignadoId || d.proyectoAsignado
               td= d.estado
     else
       p No hay donantes corporativos registrados actualmente.
