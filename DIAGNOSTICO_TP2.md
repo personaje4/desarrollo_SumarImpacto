@@ -1,5 +1,7 @@
 # SumarImpacto segunda entrega
 
+> Diagnóstico histórico de la primera entrega. Para el estado de la integración de Proyecto del 15/10/2026, consultar README.md e INTEGRACION_PROYECTO.md.
+
 ## Estado de la primera etapa
 
 Se revisaron los archivos del ZIP de la primera entrega y se preparó esta copia de trabajo. El ZIP original y los materiales de sources no fueron modificados. La revisión fue estática: todavía no se ejecutó la aplicación ni se probó una conexión a MongoDB.

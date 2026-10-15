@@ -1,0 +1,79 @@
+doctype html
+html(lang="es")
+  head
+    meta(charset="UTF-8")
+    title= proyecto ? "Editar Proyecto - SumarImpacto" : "Nuevo Proyecto - SumarImpacto"
+  body
+    h1= proyecto ? "Editar Proyecto Solidario" : "Registrar Nuevo Proyecto Solidario"
+    form(action=proyecto ? "/proyecto/" + proyecto._id + "/editar" : "/proyecto" method="POST")
+      div
+        label(for="nombre") Nombre del Proyecto:
+        input(type="text" id="nombre" name="nombre" value=proyecto ? proyecto.nombre : "" required)
+      br
+
+      div
+        label(for="descripcion") Descripción:
+        textarea(id="descripcion" name="descripcion" required)= proyecto ? proyecto.descripcion : ""
+      br
+
+      div
+        label(for="organizacion") Organización Responsable:
+        input(type="text" id="organizacion" name="organizacion" value=proyecto ? proyecto.organizacion : "" required)
+      br
+
+      div
+        label(for="ubicacion") Ubicación:
+        input(type="text" id="ubicacion" name="ubicacion" value=proyecto ? proyecto.ubicacion : "" required)
+      br
+
+      div
+        label(for="categoria") Categoría:
+        input(type="text" id="categoria" name="categoria" value=proyecto ? proyecto.categoria : "" required)
+      br
+
+      div
+        label(for="presupuestoObjetivo") Presupuesto Objetivo:
+        input(type="number" id="presupuestoObjetivo" name="presupuestoObjetivo" value=proyecto ? proyecto.presupuestoObjetivo : "" min="0" step="0.01" required)
+      br
+
+      div
+        label(for="moneda") Moneda:
+        select(id="moneda" name="moneda" required)
+          option(value="ARS" selected=proyecto ? proyecto.moneda === "ARS" : true) ARS
+          option(value="USD" selected=proyecto ? proyecto.moneda === "USD" : false) USD
+      br
+
+      div
+        label(for="responsable") Responsable:
+        input(type="text" id="responsable" name="responsable" value=proyecto ? proyecto.responsable : "" required)
+      br
+
+      div
+        label(for="email_responsable") Email Responsable:
+        input(type="email" id="email_responsable" name="email_responsable" value=proyecto ? proyecto.email_responsable : "" required)
+      br
+
+      div
+        label(for="fechaInicio") Fecha de Inicio:
+        input(type="date" id="fechaInicio" name="fechaInicio" value=proyecto && proyecto.fechaInicio ? new Date(proyecto.fechaInicio).toISOString().slice(0, 10) : "" required)
+      br
+
+      div
+        label(for="fechaFin") Fecha de Finalización (opcional):
+        input(type="date" id="fechaFin" name="fechaFin" value=proyecto && proyecto.fechaFin ? new Date(proyecto.fechaFin).toISOString().slice(0, 10) : "")
+      br
+
+      div
+        label(for="estado") Estado:
+        select(id="estado" name="estado")
+          option(value="planificación" selected=proyecto ? proyecto.estado === "planificación" : false) Planificación
+          option(value="en ejecución" selected=proyecto ? proyecto.estado === "en ejecución" : true) En ejecución
+          option(value="finalizado" selected=proyecto ? proyecto.estado === "finalizado" : false) Finalizado
+          option(value="cancelado" selected=proyecto ? proyecto.estado === "cancelado" : false) Cancelado
+      br
+
+      div
+        button(type="submit") Guardar Proyecto
+
+    p
+      a(href="/proyecto") Volver al listado
