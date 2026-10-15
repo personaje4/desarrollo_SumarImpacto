@@ -2,21 +2,24 @@ doctype html
 html(lang="es")
   head
     meta(charset="UTF-8")
-    title Nuevo Donante - SumarImpacto
+    title Registrar Donante Corporativo - SumarImpacto
   body
-    h1 Registrar Donante Corporativo
+    h1 Registrar Nuevo Donante Corporativo
+    p
+      a(href="/donanteCorporativo") ← Volver al Listado
+
     form(action="/donanteCorporativo" method="POST")
       div
         label(for="razonSocial") Razón Social: 
         input(type="text" id="razonSocial" name="razonSocial" required)
       br
       div
-        label(for="cuit") CUIT (11 dígitos): 
-        input(type="text" id="cuit" name="cuit" maxlength="11" required)
+        label(for="cuit") CUIT: 
+        input(type="text" id="cuit" name="cuit" required placeholder="30-12345678-9")
       br
       div
         label(for="rubro") Rubro: 
-        input(type="text" id="rubro" name="rubro")
+        input(type="text" id="rubro" name="rubro" required)
       br
       div
         label(for="personaContacto") Persona de Contacto: 
@@ -27,26 +30,23 @@ html(lang="es")
         input(type="email" id="emailContacto" name="emailContacto" required)
       br
       div
-        label(for="montoTotalDonado") Monto Total Donado: 
-        input(type="number" id="montoTotalDonado" name="montoTotalDonado" step="0.01")
+        label(for="montoTotalDonado") Monto Donado: 
+        input(type="number" id="montoTotalDonado" name="montoTotalDonado" min="0" step="any" required)
       br
       div
         label(for="moneda") Moneda: 
-        select(id="moneda" name="moneda")
-          option(value="ARS" selected) ARS
+        select(id="moneda" name="moneda" required)
+          option(value="ARS") ARS
           option(value="USD") USD
       br
       div
-        label(for="proyectoAsignadoId") ID Proyecto Asignado: 
-        input(type="text" id="proyectoAsignadoId" name="proyectoAsignadoId")
+        label(for="proyectoAsignadoId") ID Proyecto Asignado (Opcional): 
+        input(type="text" id="proyectoAsignadoId" name="proyectoAsignadoId" placeholder="Ej: 64b8f...a1c")
       br
       div
         label(for="estado") Estado: 
-        select(id="estado" name="estado")
-          option(value="activo" selected) Activo
-          option(value="inactivo") Inactivo
+        select(id="estado" name="estado" required)
+          option(value="Activo") Activo
+          option(value="Inactivo") Inactivo
       br
-      div
-        button(type="submit") Guardar Donante
-    p
-      a(href="/donanteCorporativo") Volver al listado
+      button(type="submit") Guardar Donante
