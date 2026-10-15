@@ -4,7 +4,9 @@ Aplicación de gestión de proyectos y donantes corporativos con Express y vista
 
 ## Avance actual
 
-Se preparó y verificó la conexión a MongoDB mediante Mongoose. El servidor espera esa conexión antes de aceptar solicitudes. Los controladores todavía guardan información en JSON: la migración de los módulos está pendiente.
+El servidor espera la conexión a MongoDB antes de aceptar solicitudes. Proyecto usa un modelo Mongoose, CRUD asincrónico y vistas de alta, listado, edición y baja. Donante Corporativo todavía guarda información en JSON. Los datos JSON de ejemplo no se importan automáticamente.
+
+La integración de Proyecto se documenta en [INTEGRACION_PROYECTO.md](INTEGRACION_PROYECTO.md), con decisiones, endpoints, ejemplos para Postman y limitaciones.
 
 ## Instalación y ejecución
 
@@ -44,4 +46,10 @@ El 10 de octubre de 2026 se ejecutó la función conectarDB desde Node.js contra
 
 ## Pendientes
 
-Esquemas Mongoose, migración de controladores, validaciones, adaptación de vistas y referencias, pruebas funcionales y documentación final. Consultar DIAGNOSTICO_TP2.md para el análisis de la primera entrega.
+Ejecutar la suite de integración contra MongoDB, migrar Donante Corporativo, resolver las referencias y la eliminación de proyectos vinculados, planificar la importación de datos y completar la documentación final. Consultar DIAGNOSTICO_TP2.md como diagnóstico histórico de la primera entrega.
+
+## Verificación de la integración de Proyecto (15/10/2026)
+
+`node --test tests/proyecto.test.js`: cinco pruebas aprobadas (validación Mongoose, fechas, vistas Pug y rutas HTTP con consultas simuladas). Las simulaciones no verifican persistencia.
+
+Se intentó iniciar MongoDB temporal 8.0.16 y 7.0.24; ambos procesos terminaron con código 100 y «open: Operation not permitted» en este entorno. Por eso el CRUD contra MongoDB y la persistencia no se dan por verificados. La suite reproducible queda en `tests/proyecto.integration.test.js`; requiere `MONGODB_URI_TEST` apuntando a una base descartable, según INTEGRACION_PROYECTO.md. No fusionar hasta completar esa verificación.

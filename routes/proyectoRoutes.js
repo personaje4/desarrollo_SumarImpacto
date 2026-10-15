@@ -1,21 +1,17 @@
-import express from "express";
-
-import {
-  obtenerProyecto,
-  obtenerProyectoPorId,
-  crearProyecto,
-  actualizarProyecto,
-  eliminarProyecto
-} from "../controllers/proyectoController.js";
-
+const express = require('express');
 const router = express.Router();
+const { obtenerProyecto, obtenerProyectoPorId, obtenerProyectoEditar,
+    crearProyecto, actualizarProyecto, eliminarProyecto } = require('../controllers/proyectoController');
 
-// RUTAS CRUD PARA PROYECTOS
-router.get("/", obtenerProyecto);
-router.get("/:id", obtenerProyectoPorId);
-router.post("/", crearProyecto);
-router.put("/:id", actualizarProyecto);
-router.delete("/:id", eliminarProyecto);
+router.get('/', obtenerProyecto);
+router.get('/nuevo', (req, res) => res.render('proyectos/nuevo'));
+router.get('/eliminar', (req, res) => res.render('proyectos/eliminar'));
+router.post('/eliminar', eliminarProyecto);
+router.get('/:idProyecto/editar', obtenerProyectoEditar);
+router.post('/:idProyecto/editar', actualizarProyecto);
+router.get('/:idProyecto', obtenerProyectoPorId);
+router.post('/', crearProyecto);
+router.put('/:idProyecto', actualizarProyecto);
+router.delete('/:idProyecto', eliminarProyecto);
 
-
-export default router;
+module.exports = router;
