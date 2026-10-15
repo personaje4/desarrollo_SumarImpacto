@@ -77,13 +77,30 @@ Guardar el `_id` de la respuesta para consultar, modificar o eliminar. Ejemplo d
 
 ## Verificación ejecutada
 
-`node --test tests/proyecto.test.js`: 5 pruebas aprobadas el 15/10/2026 con Node.js 24.19.0, Express 5.2.1, Mongoose 9.11.1 y Pug 3.0.4. Se verifican validaciones reales del modelo, renderizado de las cuatro vistas y rutas HTTP; las consultas de inexistencia se simulan.
+El 15/10/2026, Ángel ejecutó las pruebas en Windows con Node.js 24.22.0 y npm 11.19.1, después de actualizar las dependencias y retirar Nodemon. Los resultados compartidos fueron:
 
-No se ejecutó el CRUD contra MongoDB: se intentaron servidores temporales 8.0.16 y 7.0.24 y ambos finalizaron con código 100, «open: Operation not permitted». La persistencia y los índices reales permanecen pendientes. No fusionar el PR hasta ejecutar la suite siguiente con MongoDB disponible.
+- `node --test tests/proyecto.test.js`: 5 pruebas aprobadas, 0 fallidas.
+- `node --test tests/proyecto.integration.test.js`: 15 pruebas aprobadas, 0 fallidas (14 casos y la prueba contenedora).
+- Última auditoría informada por npm: 0 vulnerabilidades conocidas en las dependencias instaladas.
+
+Se comprobaron CRUD HTTP, formularios, identificadores numéricos y ObjectId, validaciones, duplicados y persistencia al cerrar y reabrir el servidor HTTP y la conexión Mongoose contra la misma base. No se reinició el servicio MongoDB ni se verificó la migración de Donante Corporativo.
+
+La base descartable utilizada fue `mongodb://127.0.0.1:27017/sumarimpacto_integracion_test`. La suite elimina los proyectos de esa base al comenzar y terminar. Estos resultados corresponden a la ejecución local informada por Ángel; complementan las pruebas iniciales realizadas durante la preparación de las correcciones.
+
+## Herramienta de desarrollo
+
+Se retiró Nodemon y sus dependencias de observación. `npm run dev` utiliza el modo estable `node --watch index.js`, incluido en Node.js 24. El comando `npm start` sigue ejecutando `node index.js`. Las correcciones compatibles de dependencias se conservan en package-lock.json.
 
 ## Reproducir las pruebas
 
 Instalar las dependencias con `npm ci`. Iniciar MongoDB y utilizar una base exclusiva de pruebas cuyo nombre termine en `_test`. El script elimina los proyectos de esa base al comenzar y al terminar; nunca usar una base con información real.
+
+Símbolo del sistema de Windows (CMD):
+
+```bat
+set "MONGODB_URI_TEST=mongodb://127.0.0.1:27017/sumarimpacto_integracion_test"
+node --test tests/proyecto.integration.test.js
+```
 
 PowerShell:
 
