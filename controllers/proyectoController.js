@@ -1,184 +1,102 @@
-const fs = require('fs');
-const path = require('path');
+const mongoose = require('mongoose');
+const Proyecto = require('../models/proyectoManager');
 
-const { Proyecto } = require('../models/proyectoManager');
+const campos = ['nombre', 'organizacion', 'descripcion', 'ubicacion', 'categoria',
+    'presupuestoObjetivo', 'moneda', 'fechaInicio', 'fechaFin', 'estado',
+    'responsable', 'email_responsable'];
 
-const rutaArchivoProyecto = path.join(__dirname, '../data/proyectos.json');
+// Formularios: vistas y redirecciones. Solicitudes JSON: respuestas JSON.
+const esWeb = (req) => !req.is('application/json') &&
+    req.accepts(['html', 'json']) === 'html';
 
-// función leer archivo
-const leerProyectos = () => {
-    const data = fs.readFileSync(rutaArchivoProyecto, 'utf8');
-    return JSON.parse(data);
-};
-
-// función guardar archivo
-const guardarProyectos = (proyectos) => {
-    fs.writeFileSync(
-        rutaArchivoProyecto,
-        JSON.stringify(proyectos, null, 2)
-    );
-};
-
-// GET ALL
-const obtenerProyecto = (req, res) => {
-    const proyectos = leerProyectos();
-
-    if (req.accepts('html')) {
-        return res.render('proyectos/listar', { proyectos });
+function datosProyecto(body = {}) {
+    const datos = {};
+    for (const campo of campos) {
+        if (body[campo] !== undefined) datos[campo] = body[campo];
     }
+    if (typeof datos.fechaFin === 'string' && !datos.fechaFin.trim()) datos.fechaFin = null;
+    return datos;
+}
 
-    res.json(proyectos);
-};
-
-// GET BY ID
-const obtenerProyectoPorId = (req, res) => {
-    const proyectos = leerProyectos();
-    const id = parseInt(req.params.idProyecto, 10);
-    const proyecto = proyectos.find((p) => p.id === id || p.idProyecto === id);
-
-    if (!proyecto) {
-        return res.status(404).json({ message: 'Proyecto no encontrado' });
+// Se acepta ObjectId o el número histórico del proyecto.
+function filtroId(id) {
+    if (/^[1-9]\d*$/.test(id) && Number.isSafeInteger(Number(id))) {
+        return { idProyecto: Number(id) };
     }
+    if (mongoose.isObjectIdOrHexString(id)) return { _id: id };
+    const error = new Error('Identificador de proyecto inválido');
+    error.status = 400;
+    throw error;
+}
 
-    res.json(proyecto);
+function responderError(res, error) {
+    if (error.code === 11000) return res.status(409).json({ mensaje: 'El número de proyecto ya existe; vuelva a intentar con otro número o con asignación automática' });
+    const status = error.status || (['ValidationError', 'CastError'].includes(error.name) ? 400 : 500);
+    if (status === 500) console.error(error);
+    return res.status(status).json({ mensaje: status === 500 ? 'Error al procesar el proyecto' : error.message });
+}
+
+const obtenerProyecto = async (req, res) => {
+    try {
+        const proyectos = await Proyecto.find().sort({ idProyecto: 1 });
+        if (esWeb(req)) return res.render('proyectos/listar', { proyectos });
+        return res.json(proyectos);
+    } catch (error) { return responderError(res, error); }
 };
 
-// CREATE (Secuencia numérica automática)
-const crearProyecto = (req, res) => {
-    const proyectos = leerProyectos();
-
-    const ultimoId = proyectos.reduce((max, p) => {
-        const idActual = Number(p.id || p.idProyecto || 0);
-        return idActual > max ? idActual : max;
-    }, 0);
-
-    const nuevoProyecto = new Proyecto(
-        req.body.idProyecto ? Number(req.body.idProyecto) : ultimoId + 1,
-        req.body.nombre,
-        req.body.organizacion,
-        req.body.descripcion,
-        req.body.ubicacion,
-        req.body.categoria,
-        Number(req.body.presupuestoObjetivo),
-        req.body.moneda,
-        req.body.fechaInicio,
-        req.body.fechaFin,
-        req.body.estado || 'activo',
-        req.body.responsable,
-        req.body.email_responsable
-    );
-
-    proyectos.push(nuevoProyecto);
-    guardarProyectos(proyectos);
-
-    if (req.accepts('html')) {
-        return res.redirect('/proyecto');
-    }
-
-    res.status(201).json({
-        mensaje: 'Proyecto creado',
-        proyecto: nuevoProyecto
-    });
+const obtenerProyectoPorId = async (req, res) => {
+    try {
+        const proyecto = await Proyecto.findOne(filtroId(req.params.idProyecto));
+        if (!proyecto) return res.status(404).json({ mensaje: 'Proyecto no encontrado' });
+        return res.json(proyecto);
+    } catch (error) { return responderError(res, error); }
 };
 
-// UPDATE
-const actualizarProyecto = (req, res) => {
-    const proyectos = leerProyectos();
-    const id = parseInt(req.params.idProyecto, 10);
-    const proyectoIndex = proyectos.findIndex((p) => p.id === id || p.idProyecto === id);
-
-    if (proyectoIndex === -1) {
-        return res.status(404).json({
-            mensaje: 'Proyecto no encontrado'
-        });
-    }
-
-    const {
-        nombre,
-        descripcion,
-        organizacion,
-        ubicacion,
-        categoria,
-        presupuestoObjetivo,
-        moneda,
-        fechaInicio,
-        fechaFin,
-        estado,
-        responsable,
-        email_responsable
-    } = req.body;
-
-    proyectos[proyectoIndex].nombre =
-        nombre ?? proyectos[proyectoIndex].nombre;
-
-    proyectos[proyectoIndex].descripcion =
-        descripcion ?? proyectos[proyectoIndex].descripcion;
-
-    proyectos[proyectoIndex].organizacion =
-        organizacion ?? proyectos[proyectoIndex].organizacion;
-
-    proyectos[proyectoIndex].ubicacion =
-        ubicacion ?? proyectos[proyectoIndex].ubicacion;
-
-    proyectos[proyectoIndex].categoria =
-        categoria ?? proyectos[proyectoIndex].categoria;
-
-    proyectos[proyectoIndex].presupuestoObjetivo =
-        presupuestoObjetivo !== undefined
-            ? Number(presupuestoObjetivo)
-            : proyectos[proyectoIndex].presupuestoObjetivo;
-
-    proyectos[proyectoIndex].moneda =
-        moneda ?? proyectos[proyectoIndex].moneda;
-
-    proyectos[proyectoIndex].fechaInicio =
-        fechaInicio ?? proyectos[proyectoIndex].fechaInicio;
-
-    proyectos[proyectoIndex].fechaFin =
-        fechaFin ?? proyectos[proyectoIndex].fechaFin;
-
-    proyectos[proyectoIndex].estado =
-        estado ?? proyectos[proyectoIndex].estado;
-
-    proyectos[proyectoIndex].responsable =
-        responsable ?? proyectos[proyectoIndex].responsable;
-
-    proyectos[proyectoIndex].email_responsable =
-        email_responsable ?? proyectos[proyectoIndex].email_responsable;
-
-    guardarProyectos(proyectos);
-    res.json({
-        mensaje: 'Proyecto actualizado',
-        proyecto: proyectos[proyectoIndex]
-    });
+const obtenerProyectoEditar = async (req, res) => {
+    try {
+        const proyecto = await Proyecto.findOne(filtroId(req.params.idProyecto));
+        if (!proyecto) return res.status(404).json({ mensaje: 'Proyecto no encontrado' });
+        return res.render('proyectos/editar', { proyecto });
+    } catch (error) { return responderError(res, error); }
 };
 
-// DELETE (Soporta web y API)
-const eliminarProyecto = (req, res) => {
-    const proyectos = leerProyectos();
-    const id = parseInt(req.params.idProyecto, 10);
-    const nuevosProyectos = proyectos.filter((p) => (p.id !== id && p.idProyecto !== id));
-
-    if (proyectos.length === nuevosProyectos.length) {
-        if (req.accepts('html')) {
-            return res.status(404).send("Error: Proyecto no encontrado. <a href='/proyecto'>Volver</a>");
+const crearProyecto = async (req, res) => {
+    try {
+        const body = req.body || {};
+        const datos = datosProyecto(body);
+        if (body.idProyecto !== undefined && body.idProyecto !== '') {
+            datos.idProyecto = body.idProyecto;
+        } else {
+            const ultimo = await Proyecto.findOne().sort({ idProyecto: -1 });
+            datos.idProyecto = ultimo ? ultimo.idProyecto + 1 : 1;
         }
-        return res.status(404).json({ mensaje: 'Proyecto no encontrado' });
-    }
-
-    guardarProyectos(nuevosProyectos);
-
-    if (req.accepts('html')) {
-        return res.redirect('/proyecto');
-    }
-
-    res.json({ mensaje: 'Proyecto eliminado' });
+        const proyecto = await Proyecto.create(datos);
+        if (esWeb(req)) return res.redirect('/proyecto');
+        return res.status(201).json({ mensaje: 'Proyecto creado', proyecto });
+    } catch (error) { return responderError(res, error); }
 };
 
-module.exports = {
-    obtenerProyecto,
-    obtenerProyectoPorId,
-    crearProyecto,
-    actualizarProyecto,
-    eliminarProyecto
+const actualizarProyecto = async (req, res) => {
+    try {
+        const proyecto = await Proyecto.findOne(filtroId(req.params.idProyecto));
+        if (!proyecto) return res.status(404).json({ mensaje: 'Proyecto no encontrado' });
+        // Los identificadores de un registro existente no se modifican.
+        proyecto.set(datosProyecto(req.body));
+        await proyecto.save();
+        if (esWeb(req)) return res.redirect('/proyecto');
+        return res.json({ mensaje: 'Proyecto actualizado', proyecto });
+    } catch (error) { return responderError(res, error); }
 };
+
+const eliminarProyecto = async (req, res) => {
+    try {
+        const id = req.params.idProyecto || req.body.idProyecto;
+        const proyecto = await Proyecto.findOneAndDelete(filtroId(id));
+        if (!proyecto) return res.status(404).json({ mensaje: 'Proyecto no encontrado' });
+        if (esWeb(req)) return res.redirect('/proyecto');
+        return res.json({ mensaje: 'Proyecto eliminado' });
+    } catch (error) { return responderError(res, error); }
+};
+
+module.exports = { obtenerProyecto, obtenerProyectoPorId, obtenerProyectoEditar,
+    crearProyecto, actualizarProyecto, eliminarProyecto };
