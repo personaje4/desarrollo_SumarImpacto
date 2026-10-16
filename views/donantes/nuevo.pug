@@ -1,52 +1,10 @@
 doctype html
-html(lang="es")
+html(lang='es')
   head
-    meta(charset="UTF-8")
-    title Registrar Donante Corporativo - SumarImpacto
+    meta(charset='UTF-8')
+    title Nuevo donante
   body
-    h1 Registrar Nuevo Donante Corporativo
-    p
-      a(href="/donanteCorporativo") ← Volver al Listado
-
-    form(action="/donanteCorporativo" method="POST")
-      div
-        label(for="razonSocial") Razón Social: 
-        input(type="text" id="razonSocial" name="razonSocial" required)
-      br
-      div
-        label(for="cuit") CUIT: 
-        input(type="text" id="cuit" name="cuit" required placeholder="30-12345678-9")
-      br
-      div
-        label(for="rubro") Rubro: 
-        input(type="text" id="rubro" name="rubro" required)
-      br
-      div
-        label(for="personaContacto") Persona de Contacto: 
-        input(type="text" id="personaContacto" name="personaContacto" required)
-      br
-      div
-        label(for="emailContacto") Email de Contacto: 
-        input(type="email" id="emailContacto" name="emailContacto" required)
-      br
-      div
-        label(for="montoTotalDonado") Monto Donado: 
-        input(type="number" id="montoTotalDonado" name="montoTotalDonado" min="0" step="any" required)
-      br
-      div
-        label(for="moneda") Moneda: 
-        select(id="moneda" name="moneda" required)
-          option(value="ARS") ARS
-          option(value="USD") USD
-      br
-      div
-        label(for="proyectoAsignadoId") ID Proyecto Asignado (Opcional): 
-        input(type="text" id="proyectoAsignadoId" name="proyectoAsignadoId" placeholder="Ej: 64b8f...a1c")
-      br
-      div
-        label(for="estado") Estado: 
-        select(id="estado" name="estado" required)
-          option(value="Activo") Activo
-          option(value="Inactivo") Inactivo
-      br
-      button(type="submit") Guardar Donante
+    h1 Registrar donante corporativo
+    form(action='/donanteCorporativo' method='POST')
+      include _formulario.pug
+    a(href='/donanteCorporativo') Volver al listado

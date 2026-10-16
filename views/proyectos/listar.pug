@@ -16,7 +16,8 @@ html(lang="es")
       table(border="1" cellpadding="5" cellspacing="0")
         thead
           tr
-            th ID
+            th ID MongoDB
+            th Número de proyecto
             th Nombre
             th Descripción
             th Organización
@@ -25,10 +26,12 @@ html(lang="es")
             th Fecha Inicio
             th Fecha Fin
             th Estado
+            th Acciones
         tbody
           each p in proyectos
             tr
               td= p._id
+              td= p.idProyecto
               td= p.nombre
               td= p.descripcion
               td= p.organizacion
@@ -37,5 +40,7 @@ html(lang="es")
               td= p.fechaInicio
               td= p.fechaFin
               td= p.estado
+              td
+                a(href="/proyecto/" + p._id + "/editar") Editar
     else
       p No hay proyectos registrados actualmente.

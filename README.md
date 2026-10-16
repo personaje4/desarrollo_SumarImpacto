@@ -4,11 +4,13 @@ Aplicación de gestión de proyectos y donantes corporativos con Express y vista
 
 ## Avance actual
 
-Se preparó y verificó la conexión a MongoDB mediante Mongoose. El servidor espera esa conexión antes de aceptar solicitudes. Los controladores todavía guardan información en JSON: la migración de los módulos está pendiente.
+El servidor espera la conexión a MongoDB antes de aceptar solicitudes. Proyecto y Donante Corporativo usan modelos Mongoose, CRUD asincrónico y vistas de alta, listado, edición y baja. Los datos JSON de ejemplo no se importan automáticamente. La integración de Donante Corporativo se prepara en el PR #5 y se documenta en [INTEGRACION_DONANTE.md](INTEGRACION_DONANTE.md); sus pruebas de integración con MongoDB real fueron aprobadas en el equipo de Ángel el 15/10/2026.
+
+La integración de Proyecto se documenta en [INTEGRACION_PROYECTO.md](INTEGRACION_PROYECTO.md), con decisiones, endpoints, ejemplos para Postman y limitaciones.
 
 ## Instalación y ejecución
 
-Requisitos: Node.js con npm y MongoDB local iniciado como servicio.
+Requisitos: Node.js 24 LTS con npm y MongoDB local iniciado como servicio.
 
 Desde esta carpeta:
 
@@ -29,7 +31,7 @@ El archivo .env está excluido de Git. Si se usa Atlas, no publicar la URI con c
 npm start
 ```
 
-Abrir http://localhost:3000. Para desarrollo también puede usarse npm run dev.
+Abrir http://localhost:3000. Para desarrollo, `npm run dev` ejecuta `node --watch index.js` y reinicia el servidor al cambiar módulos JavaScript. No se requiere Nodemon.
 
 ## Archivos de esta etapa
 
@@ -40,8 +42,31 @@ Abrir http://localhost:3000. Para desarrollo también puede usarse npm run dev.
 
 ## Verificación realizada
 
-El 10 de octubre de 2026 se ejecutó la función conectarDB desde Node.js contra mongodb://127.0.0.1:27017/sumarimpacto. Resultado obtenido: «Conexión a MongoDB establecida», cierre de la conexión y salida con código 0. Esta comprobación no escribió documentos ni verifica todavía CRUD o persistencia.
+El 10 de octubre de 2026 se ejecutó la función conectarDB desde Node.js contra mongodb://127.0.0.1:27017/sumarimpacto. Resultado obtenido: «Conexión a MongoDB establecida», cierre de la conexión y salida con código 0. Esta comprobación inicial no escribió documentos. Las pruebas CRUD y de persistencia del 15/10/2026 se registran a continuación.
 
 ## Pendientes
 
-Esquemas Mongoose, migración de controladores, validaciones, adaptación de vistas y referencias, pruebas funcionales y documentación final. Consultar DIAGNOSTICO_TP2.md para el análisis de la primera entrega.
+Publicar y revisar las correcciones del PR #5 antes de fusionarlo, revisar el PR #3 de vistas, decidir qué datos de ejemplo importar y completar la documentación final. Consultar DIAGNOSTICO_TP2.md como diagnóstico histórico de la primera entrega.
+
+## Verificación de la integración de Proyecto (15/10/2026)
+
+El 15/10/2026, Ángel ejecutó las pruebas en Windows con Node.js 24.22.0 y npm 11.19.1, después de actualizar las dependencias y retirar Nodemon. Los resultados compartidos fueron:
+
+- `node --test tests/proyecto.test.js`: 5 pruebas aprobadas, 0 fallidas.
+- `node --test tests/proyecto.integration.test.js`: 15 pruebas aprobadas, 0 fallidas (14 casos y la prueba contenedora).
+- Última auditoría informada por npm: 0 vulnerabilidades conocidas en las dependencias instaladas.
+
+Se comprobaron CRUD HTTP, formularios, identificadores numéricos y ObjectId, validaciones, duplicados y persistencia al cerrar y reabrir el servidor HTTP y la conexión Mongoose contra la misma base. No se reinició el servicio MongoDB ni se verificó la migración de Donante Corporativo.
+
+La base descartable utilizada fue `mongodb://127.0.0.1:27017/sumarimpacto_integracion_test`. La suite elimina los proyectos de esa base al comenzar y terminar. Estos resultados corresponden a la ejecución local informada por Ángel; complementan las pruebas iniciales realizadas durante la preparación de las correcciones.
+
+
+## Verificación conjunta de Proyecto y Donante (15/10/2026)
+
+Ángel ejecutó en Windows, con Node.js 24.20.0 y npm 11.19.0, las correcciones preparadas para el PR #5. Resultados compartidos en la terminal:
+
+- `node --test tests/proyecto.test.js tests/donante.test.js`: 10 aprobadas, 0 fallidas.
+- `node --test tests/donante.integration.test.js`: 12 aprobadas, 0 fallidas (11 casos y la prueba contenedora).
+- `node --test tests/proyecto.integration.test.js`: 15 aprobadas, 0 fallidas (14 casos y la prueba contenedora).
+
+Ambas suites de integración se ejecutaron por separado contra `mongodb://127.0.0.1:27017/sumarimpacto_donante_integracion_test`. Se verificaron CRUD, formularios, vínculos existentes, rechazo de proyectos inexistentes, CUIT duplicado, bloqueo de eliminación de proyectos vinculados y persistencia al reabrir HTTP/Mongoose. No se reinició mongod ni se importaron los JSON de ejemplo mediante el CLI. Los resultados corresponden a la ejecución local informada por Ángel y no a un flujo automático de GitHub Actions.

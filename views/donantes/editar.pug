@@ -1,0 +1,10 @@
+doctype html
+html(lang='es')
+  head
+    meta(charset='UTF-8')
+    title Editar donante
+  body
+    h1 Editar donante corporativo
+    form(action='/donanteCorporativo/' + donante._id + '/editar' method='POST')
+      include _formulario.pug
+    a(href='/donanteCorporativo') Volver al listado
