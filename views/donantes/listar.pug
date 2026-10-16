@@ -31,7 +31,7 @@ html(lang='es')
               td= d.estado
               td
                 a(href='/donanteCorporativo/' + d._id + '/editar') Editar
-                form(action='/donanteCorporativo/eliminar' method='POST')
+                form(action='/donanteCorporativo/eliminar' method='POST' onsubmit="return confirm('¿Está seguro de que desea eliminar este donante?');")
                   input(type='hidden' name='idDonante' value=d._id)
                   button(type='submit') Eliminar
     else
