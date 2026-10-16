@@ -4,6 +4,7 @@ html(lang="es")
     meta(charset="UTF-8")
     title Proyectos - SumarImpacto
   body
+    - const formatearFecha = valor => valor ? new Date(valor).toLocaleDateString('es-AR', { timeZone: 'UTC', day: '2-digit', month: '2-digit', year: 'numeric' }) : ''
     h1 Listado de Proyectos Solidarios
     p
       a(href="/proyecto/nuevo") + Registrar Nuevo Proyecto
@@ -37,10 +38,11 @@ html(lang="es")
               td= p.organizacion
               td= p.responsable
               td= p.email_responsable
-              td= p.fechaInicio
-              td= p.fechaFin
+              td= formatearFecha(p.fechaInicio)
+              td= formatearFecha(p.fechaFin)
               td= p.estado
               td
                 a(href="/proyecto/" + p._id + "/editar") Editar
     else
       p No hay proyectos registrados actualmente.
+
