@@ -4,7 +4,7 @@ Aplicación de gestión de proyectos y donantes corporativos con Express y vista
 
 ## Avance actual
 
-El servidor espera la conexión a MongoDB antes de aceptar solicitudes. Proyecto usa un modelo Mongoose, CRUD asincrónico y vistas de alta, listado, edición y baja. Donante Corporativo todavía guarda información en JSON. Los datos JSON de ejemplo no se importan automáticamente.
+El servidor espera la conexión a MongoDB antes de aceptar solicitudes. Proyecto y Donante Corporativo usan modelos Mongoose, CRUD asincrónico y vistas de alta, listado, edición y baja. Los datos JSON de ejemplo no se importan automáticamente. La integración de Donante Corporativo se prepara en el PR #5 y se documenta en [INTEGRACION_DONANTE.md](INTEGRACION_DONANTE.md); sus pruebas de integración con MongoDB real fueron aprobadas en el equipo de Ángel el 15/10/2026.
 
 La integración de Proyecto se documenta en [INTEGRACION_PROYECTO.md](INTEGRACION_PROYECTO.md), con decisiones, endpoints, ejemplos para Postman y limitaciones.
 
@@ -46,7 +46,7 @@ El 10 de octubre de 2026 se ejecutó la función conectarDB desde Node.js contra
 
 ## Pendientes
 
-Migrar Donante Corporativo, resolver las referencias y la eliminación de proyectos vinculados, planificar la importación de datos y completar la documentación final. Consultar DIAGNOSTICO_TP2.md como diagnóstico histórico de la primera entrega.
+Publicar y revisar las correcciones del PR #5 antes de fusionarlo, revisar el PR #3 de vistas, decidir qué datos de ejemplo importar y completar la documentación final. Consultar DIAGNOSTICO_TP2.md como diagnóstico histórico de la primera entrega.
 
 ## Verificación de la integración de Proyecto (15/10/2026)
 
@@ -59,3 +59,14 @@ El 15/10/2026, Ángel ejecutó las pruebas en Windows con Node.js 24.22.0 y npm 
 Se comprobaron CRUD HTTP, formularios, identificadores numéricos y ObjectId, validaciones, duplicados y persistencia al cerrar y reabrir el servidor HTTP y la conexión Mongoose contra la misma base. No se reinició el servicio MongoDB ni se verificó la migración de Donante Corporativo.
 
 La base descartable utilizada fue `mongodb://127.0.0.1:27017/sumarimpacto_integracion_test`. La suite elimina los proyectos de esa base al comenzar y terminar. Estos resultados corresponden a la ejecución local informada por Ángel; complementan las pruebas iniciales realizadas durante la preparación de las correcciones.
+
+
+## Verificación conjunta de Proyecto y Donante (15/10/2026)
+
+Ángel ejecutó en Windows, con Node.js 24.20.0 y npm 11.19.0, las correcciones preparadas para el PR #5. Resultados compartidos en la terminal:
+
+- `node --test tests/proyecto.test.js tests/donante.test.js`: 10 aprobadas, 0 fallidas.
+- `node --test tests/donante.integration.test.js`: 12 aprobadas, 0 fallidas (11 casos y la prueba contenedora).
+- `node --test tests/proyecto.integration.test.js`: 15 aprobadas, 0 fallidas (14 casos y la prueba contenedora).
+
+Ambas suites de integración se ejecutaron por separado contra `mongodb://127.0.0.1:27017/sumarimpacto_donante_integracion_test`. Se verificaron CRUD, formularios, vínculos existentes, rechazo de proyectos inexistentes, CUIT duplicado, bloqueo de eliminación de proyectos vinculados y persistencia al reabrir HTTP/Mongoose. No se reinició mongod ni se importaron los JSON de ejemplo mediante el CLI. Los resultados corresponden a la ejecución local informada por Ángel y no a un flujo automático de GitHub Actions.

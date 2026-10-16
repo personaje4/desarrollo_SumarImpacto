@@ -1,170 +1,84 @@
-const fs = require('fs');
-const path = require('path');
-const DonanteCorporativo = require('../models/donanteCorporativoManager');
-
-const rutaArchivoDonanteCorporativo = path.join(__dirname, '../data/donanteCorporativo.json');
-
-// Función leer archivo
-const leerDonanteCorporativo = () => {
-    const data = fs.readFileSync(rutaArchivoDonanteCorporativo, 'utf8');
-    return JSON.parse(data);
+const mongoose = require('mongoose');
+const Donante = require('../models/donanteCorporativoManager');
+const Proyecto = require('../models/proyectoManager');
+const CAMPOS = ['razonSocial', 'cuit', 'rubro', 'personaContacto', 'emailContacto',
+    'montoTotalDonado', 'moneda', 'estado'];
+const esWeb = req => !req.is('application/json') && req.accepts(['html', 'json']) === 'html';
+const fallo = (mensaje, status = 400) => Object.assign(new Error(mensaje), { status });
+function filtroId(id) {
+    if (mongoose.isObjectIdOrHexString(id)) return { _id: id };
+    if (/^[1-9]\d*$/.test(id) && Number.isSafeInteger(Number(id))) return { idDonanteCorporativo: Number(id) };
+    throw fallo('Identificador de donante inválido');
+}
+function errorRespuesta(res, err) {
+    if (err.code === 11000) return res.status(409).json({ mensaje: 'Ya existe un donante con ese CUIT' });
+    const status = err.status || (['ValidationError', 'CastError'].includes(err.name) ? 400 : 500);
+    if (status === 500) console.error(err);
+    return res.status(status).json({ mensaje: status === 500 ? 'Error interno del servidor' : err.message });
+}
+async function datosDonante(body = {}) {
+    const datos = {};
+    for (const campo of CAMPOS) if (body[campo] !== undefined) datos[campo] = body[campo];
+    if (datos.montoTotalDonado === '') datos.montoTotalDonado = 0;
+    const valor = body.proyectoAsignado !== undefined ? body.proyectoAsignado : body.proyectoAsignadoId;
+    if (valor === undefined) return datos;
+    if (valor === null || valor === '') { datos.proyectoAsignado = null; return datos; }
+    let filtro;
+    if (typeof valor === 'string' && mongoose.isObjectIdOrHexString(valor)) filtro = { _id: valor };
+    else if ((typeof valor === 'string' || typeof valor === 'number') && /^[1-9]\d*$/.test(String(valor)) && Number.isSafeInteger(Number(valor))) filtro = { idProyecto: Number(valor) };
+    else throw fallo('Identificador de proyecto inválido');
+    const proyecto = await Proyecto.findOne(filtro);
+    if (!proyecto) throw fallo('El proyecto asignado no existe');
+    datos.proyectoAsignado = proyecto._id;
+    return datos;
+}
+const leerId = req => req.params.idDonante || req.params.idDonanteCorporativo || req.body?.idDonante;
+const obtenerDonanteCorporativo = async (req, res) => {
+    try {
+        const donantes = await Donante.find().populate('proyectoAsignado').lean();
+        return esWeb(req) ? res.render('donantes/listar', { donantes }) : res.json(donantes);
+    } catch (err) { return errorRespuesta(res, err); }
 };
-
-// Función guardar archivo
-const guardarDonanteCorporativo = (donantes) => {
-    fs.writeFileSync(
-        rutaArchivoDonanteCorporativo,
-        JSON.stringify(donantes, null, 2)
-    );
+const obtenerDonanteCorporativoPorId = async (req, res) => {
+    try {
+        const donante = await Donante.findOne(filtroId(leerId(req))).populate('proyectoAsignado');
+        if (!donante) throw fallo('Donante corporativo no encontrado', 404);
+        return res.json(donante);
+    } catch (err) { return errorRespuesta(res, err); }
 };
-
-// GET ALL
-const obtenerDonanteCorporativo = (req, res) => {
-    const donantes = leerDonanteCorporativo();
-
-    if (req.accepts('html')) {
-        return res.render('donantes/listar', { donantes });
-    }
-
-    res.json(donantes);
-};
-
-// GET BY ID
-const obtenerDonanteCorporativoPorId = (req, res) => {
-    const donantes = leerDonanteCorporativo();
-    const id = parseInt(req.params.idDonante || req.params.idDonanteCorporativo, 10);
-    const donante = donantes.find((d) => d.id === id || d.idDonanteCorporativo === id);
-
-    if (!donante) {
-        return res.status(404).json({ message: 'Donante corporativo no encontrado' });
-    }
-    res.json(donante);
-};
-
-// CREATE (Secuencia numérica automática)
-const crearDonanteCorporativo = (req, res) => {
-    const donantes = leerDonanteCorporativo();
-
-    const ultimoId = donantes.reduce((max, d) => {
-        const idActual = Number(d.id || d.idDonanteCorporativo || 0);
-        return idActual > max ? idActual : max;
-    }, 0);
-
-    const { idDonanteCorporativo, razonSocial, cuit, rubro, personaContacto, emailContacto, montoTotalDonado, moneda, proyectoAsignadoId, estado } = req.body;
-
-    const nuevoDonante = new DonanteCorporativo(
-        idDonanteCorporativo
-            ? Number(idDonanteCorporativo)
-            : ultimoId + 1,
-        razonSocial,
-        cuit,
-        rubro,
-        personaContacto,
-        emailContacto,
-        Number(montoTotalDonado),
-        moneda,
-        Number(proyectoAsignadoId),
-        estado || 'activo'
-    );
-
-
-    donantes.push(nuevoDonante);
-    guardarDonanteCorporativo(donantes);
-
-    if (req.accepts('html')) {
-        return res.redirect('/donanteCorporativo');
-    }
-
-    res.status(201).json({
-        mensaje: 'Donante corporativo creado',
-        donante: nuevoDonante
-    });
-};
-
-// UPDATE
-const actualizarDonanteCorporativo = (req, res) => {
-    const donantes = leerDonanteCorporativo();
-    const id = parseInt(req.params.idDonante || req.params.idDonanteCorporativo, 10);
-    const donanteIndex = donantes.findIndex((d) => d.id === id || d.idDonanteCorporativo === id);
-
-    if (donanteIndex === -1) {
-        return res.status(404).json({
-            mensaje: 'Donante corporativo no encontrado'
-        });
-    }
-
-    const donante = donantes[donanteIndex];
-    const { idDonanteCorporativo, razonSocial, cuit, rubro, personaContacto, emailContacto, montoTotalDonado, moneda, proyectoAsignadoId, estado } = req.body;
-
-    donante.idDonanteCorporativo =
-    idDonanteCorporativo !== undefined
-        ? Number(idDonanteCorporativo)
-        : donante.idDonanteCorporativo;
-
-    donante.razonSocial =
-        razonSocial ?? donante.razonSocial;
-
-    donante.cuit =
-        cuit ?? donante.cuit;
-
-    donante.rubro =
-        rubro ?? donante.rubro;
-
-    donante.personaContacto =
-        personaContacto ?? donante.personaContacto;
-
-    donante.emailContacto =
-        emailContacto ?? donante.emailContacto;
-
-    donante.montoTotalDonado =
-        montoTotalDonado !== undefined
-            ? Number(montoTotalDonado)
-            : donante.montoTotalDonado;
-
-    donante.moneda =
-        moneda ?? donante.moneda;
-
-    donante.proyectoAsignadoId =
-        proyectoAsignadoId !== undefined
-            ? Number(proyectoAsignadoId)
-            : donante.proyectoAsignadoId;
-
-    donante.estado =
-        estado ?? donante.estado;
-
-    guardarDonanteCorporativo(donantes);
-    res.json({
-        mensaje: 'Donante corporativo actualizado',
-        donante
-    });
-};
-
-// DELETE (Soporta web y API)
-const eliminarDonanteCorporativo = (req, res) => {
-    const donantes = leerDonanteCorporativo();
-    const id = parseInt(req.params.idDonante || req.params.idDonanteCorporativo, 10);
-    const nuevosDonantes = donantes.filter((d) => (d.id !== id && d.idDonanteCorporativo !== id));
-
-    if (donantes.length === nuevosDonantes.length) {
-        if (req.accepts('html')) {
-            return res.status(404).send("Error: Donante no encontrado. <a href='/donanteCorporativo'>Volver</a>");
+const formularioDonante = async (req, res) => {
+    try {
+        let donante = null;
+        if (req.params.idDonante) {
+            donante = await Donante.findOne(filtroId(leerId(req)));
+            if (!donante) throw fallo('Donante corporativo no encontrado', 404);
         }
-        return res.status(404).json({ mensaje: 'Donante corporativo no encontrado' });
-    }
-
-    guardarDonanteCorporativo(nuevosDonantes);
-
-    if (req.accepts('html')) {
-        return res.redirect('/donanteCorporativo');
-    }
-
-    res.json({ mensaje: 'Donante corporativo eliminado' });
+        const proyectos = await Proyecto.find().sort({ idProyecto: 1 });
+        return res.render(donante ? 'donantes/editar' : 'donantes/nuevo', { donante, proyectos });
+    } catch (err) { return errorRespuesta(res, err); }
 };
-
-module.exports = {
-    obtenerDonanteCorporativo,
-    obtenerDonanteCorporativoPorId,
-    crearDonanteCorporativo,
-    actualizarDonanteCorporativo,
-    eliminarDonanteCorporativo
+const crearDonanteCorporativo = async (req, res) => {
+    try {
+        const donante = await Donante.create(await datosDonante(req.body));
+        return esWeb(req) ? res.redirect('/donanteCorporativo') : res.status(201).json({ mensaje: 'Donante corporativo creado', donante });
+    } catch (err) { return errorRespuesta(res, err); }
 };
+const actualizarDonanteCorporativo = async (req, res) => {
+    try {
+        const donante = await Donante.findOne(filtroId(leerId(req)));
+        if (!donante) throw fallo('Donante corporativo no encontrado', 404);
+        donante.set(await datosDonante(req.body));
+        await donante.save();
+        return esWeb(req) ? res.redirect('/donanteCorporativo') : res.json({ mensaje: 'Donante corporativo actualizado', donante });
+    } catch (err) { return errorRespuesta(res, err); }
+};
+const eliminarDonanteCorporativo = async (req, res) => {
+    try {
+        const donante = await Donante.findOneAndDelete(filtroId(leerId(req)));
+        if (!donante) throw fallo('Donante corporativo no encontrado', 404);
+        return esWeb(req) ? res.redirect('/donanteCorporativo') : res.json({ mensaje: 'Donante corporativo eliminado' });
+    } catch (err) { return errorRespuesta(res, err); }
+};
+module.exports = { obtenerDonanteCorporativo, obtenerDonanteCorporativoPorId,
+    formularioDonante, crearDonanteCorporativo, actualizarDonanteCorporativo, eliminarDonanteCorporativo };
+
