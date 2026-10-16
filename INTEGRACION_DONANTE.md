@@ -42,7 +42,7 @@ Ejecutadas durante la preparación: 10 pruebas locales aprobadas, 0 fallidas, co
 node --test tests/proyecto.test.js tests/donante.test.js
 ```
 
-Incluyen validación real de modelos, renderizado Pug y HTTP con consultas simuladas. No acreditan persistencia MongoDB. La nueva suite de integración se revisó sintácticamente pero todavía no se ejecutó contra MongoDB real en esta preparación. No reutilizar los resultados previos de Proyecto como evidencia de Donante.
+Incluyen validación real de modelos, renderizado Pug y HTTP con consultas simuladas. No acreditan persistencia MongoDB. Posteriormente, Ángel ejecutó la suite de Donante y la regresión de Proyecto contra MongoDB real en Windows con Node.js 24.20.0 y npm 11.19.0. El 15/10/2026 informó 12 pruebas aprobadas de Donante (11 casos y la contenedora), 15 de Proyecto (14 casos y la contenedora) y las 10 pruebas locales, todas con 0 fallos. La base utilizada por ambas suites, ejecutadas por separado, fue mongodb://127.0.0.1:27017/sumarimpacto_donante_integracion_test. Estos resultados son de su ejecución local compartida; no se reinició mongod ni se ejecutó el importador CLI completo contra los JSON de ejemplo.
 
 En Windows CMD, con MongoDB iniciado, ejecutar estas suites UNA POR VEZ. La suite Donante elimina TODOS los donantes y proyectos de la base de prueba al comenzar y terminar; usar exclusivamente una base descartable terminada en _test:
 
@@ -56,4 +56,4 @@ Donante contiene 11 casos y una prueba contenedora. Comprueba CRUD, errores, dup
 
 ## Límites pendientes
 
-La comprobación de referencias y la baja de Proyecto son operaciones separadas: altas/bajas concurrentes pueden competir. No hay transacciones ni bloqueo distribuido, autenticación o autorización. Antes de un uso concurrente real debe definirse una estrategia transaccional con una topología MongoDB adecuada. Los formularios muestran errores de validación como JSON; no conservan automáticamente los datos ingresados al fallar. Revisar PR #3, completar evidencia de pruebas reales y documentación final antes de la entrega.
+La comprobación de referencias y la baja de Proyecto son operaciones separadas: altas/bajas concurrentes pueden competir. No hay transacciones ni bloqueo distribuido, autenticación o autorización. Antes de un uso concurrente real debe definirse una estrategia transaccional con una topología MongoDB adecuada. Los formularios muestran errores de validación como JSON; no conservan automáticamente los datos ingresados al fallar. Publicar y revisar las correcciones del PR #5 antes de fusionarlo, revisar PR #3 y completar la documentación final antes de la entrega.
