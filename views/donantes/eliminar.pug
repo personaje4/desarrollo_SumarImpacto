@@ -5,7 +5,7 @@ html(lang='es')
     title Eliminar donante
   body
     h1 Eliminar donante corporativo
-    form(action='/donanteCorporativo/eliminar' method='POST')
+    form(action='/donanteCorporativo/eliminar' method='POST' onsubmit="return confirm('¿Está seguro de que desea eliminar este donante?');")
       label(for='idDonante') ObjectId o identificador histórico importado
       input(type='text' name='idDonante' id='idDonante' required)
       button(type='submit') Eliminar
