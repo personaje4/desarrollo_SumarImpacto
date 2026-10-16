@@ -1,170 +1,84 @@
 const mongoose = require('mongoose');
-const DonanteCorporativo = require('../models/donanteCorporativoManager');
-
-const CAMPOS = [
-    'razonSocial', 'cuit', 'rubro', 'personaContacto', 'emailContacto',
-    'montoTotalDonado', 'moneda', 'estado'
-];
-
-// Lee el id de la URL (API) o del formulario web (la ruta POST /eliminar lo copia a req.params)
-const leerId = (req) => req.params.idDonante || req.params.idDonanteCorporativo;
-
-// El formulario puede enviar el proyecto como proyectoAsignado o como proyectoAsignadoId
-const leerProyecto = (body) => body.proyectoAsignado ?? body.proyectoAsignadoId;
-
-// Hace populate solo si el modelo Proyecto ya está registrado (depende de la migración de Adriana)
-const conProyecto = (consulta) =>
-    mongoose.modelNames().includes('Proyecto')
-        ? consulta.populate('proyectoAsignado')
-        : consulta;
-
-const idInvalido = (req, res) => {
-    if (req.accepts('html')) {
-        return res.status(400).send("Error: ID inválido. <a href='/donanteCorporativo'>Volver</a>");
-    }
-    return res.status(400).json({ mensaje: 'ID inválido' });
-};
-
-const manejarError = (err, req, res) => {
-    if (err.code === 11000) {
-        return res.status(409).json({ mensaje: 'Ya existe un donante con ese CUIT' });
-    }
-    if (err.name === 'ValidationError' || err.name === 'CastError') {
-        return res.status(400).json({ mensaje: err.message });
-    }
-    console.error(err);
-    return res.status(500).json({ mensaje: 'Error interno del servidor' });
-};
-
-// GET ALL
+const Donante = require('../models/donanteCorporativoManager');
+const Proyecto = require('../models/proyectoManager');
+const CAMPOS = ['razonSocial', 'cuit', 'rubro', 'personaContacto', 'emailContacto',
+    'montoTotalDonado', 'moneda', 'estado'];
+const esWeb = req => !req.is('application/json') && req.accepts(['html', 'json']) === 'html';
+const fallo = (mensaje, status = 400) => Object.assign(new Error(mensaje), { status });
+function filtroId(id) {
+    if (mongoose.isObjectIdOrHexString(id)) return { _id: id };
+    if (/^[1-9]\d*$/.test(id) && Number.isSafeInteger(Number(id))) return { idDonanteCorporativo: Number(id) };
+    throw fallo('Identificador de donante inválido');
+}
+function errorRespuesta(res, err) {
+    if (err.code === 11000) return res.status(409).json({ mensaje: 'Ya existe un donante con ese CUIT' });
+    const status = err.status || (['ValidationError', 'CastError'].includes(err.name) ? 400 : 500);
+    if (status === 500) console.error(err);
+    return res.status(status).json({ mensaje: status === 500 ? 'Error interno del servidor' : err.message });
+}
+async function datosDonante(body = {}) {
+    const datos = {};
+    for (const campo of CAMPOS) if (body[campo] !== undefined) datos[campo] = body[campo];
+    if (datos.montoTotalDonado === '') datos.montoTotalDonado = 0;
+    const valor = body.proyectoAsignado !== undefined ? body.proyectoAsignado : body.proyectoAsignadoId;
+    if (valor === undefined) return datos;
+    if (valor === null || valor === '') { datos.proyectoAsignado = null; return datos; }
+    let filtro;
+    if (typeof valor === 'string' && mongoose.isObjectIdOrHexString(valor)) filtro = { _id: valor };
+    else if ((typeof valor === 'string' || typeof valor === 'number') && /^[1-9]\d*$/.test(String(valor)) && Number.isSafeInteger(Number(valor))) filtro = { idProyecto: Number(valor) };
+    else throw fallo('Identificador de proyecto inválido');
+    const proyecto = await Proyecto.findOne(filtro);
+    if (!proyecto) throw fallo('El proyecto asignado no existe');
+    datos.proyectoAsignado = proyecto._id;
+    return datos;
+}
+const leerId = req => req.params.idDonante || req.params.idDonanteCorporativo || req.body?.idDonante;
 const obtenerDonanteCorporativo = async (req, res) => {
     try {
-        const donantes = await conProyecto(DonanteCorporativo.find()).lean();
-
-        if (req.accepts('html')) {
-            return res.render('donantes/listar', { donantes });
-        }
-        res.json(donantes);
-    } catch (err) {
-        manejarError(err, req, res);
-    }
+        const donantes = await Donante.find().populate('proyectoAsignado').lean();
+        return esWeb(req) ? res.render('donantes/listar', { donantes }) : res.json(donantes);
+    } catch (err) { return errorRespuesta(res, err); }
 };
-
-// GET BY ID
 const obtenerDonanteCorporativoPorId = async (req, res) => {
     try {
-        const id = leerId(req);
-        if (!mongoose.isValidObjectId(id)) return idInvalido(req, res);
-
-        const donante = await conProyecto(DonanteCorporativo.findById(id)).lean();
-        if (!donante) {
-            return res.status(404).json({ message: 'Donante corporativo no encontrado' });
-        }
-        res.json(donante);
-    } catch (err) {
-        manejarError(err, req, res);
-    }
+        const donante = await Donante.findOne(filtroId(leerId(req))).populate('proyectoAsignado');
+        if (!donante) throw fallo('Donante corporativo no encontrado', 404);
+        return res.json(donante);
+    } catch (err) { return errorRespuesta(res, err); }
 };
-
-// CREATE (el _id lo genera MongoDB)
+const formularioDonante = async (req, res) => {
+    try {
+        let donante = null;
+        if (req.params.idDonante) {
+            donante = await Donante.findOne(filtroId(leerId(req)));
+            if (!donante) throw fallo('Donante corporativo no encontrado', 404);
+        }
+        const proyectos = await Proyecto.find().sort({ idProyecto: 1 });
+        return res.render(donante ? 'donantes/editar' : 'donantes/nuevo', { donante, proyectos });
+    } catch (err) { return errorRespuesta(res, err); }
+};
 const crearDonanteCorporativo = async (req, res) => {
     try {
-        
-        const datos = {};
-        CAMPOS.forEach((c) => {
-            if (req.body[c] !== undefined && req.body[c] !== '') datos[c] = req.body[c];
-        });
-
-        const proyecto = leerProyecto(req.body);
-        console.log('🟢 proyecto que llegó:', JSON.stringify(proyecto));
-        console.log('🟢 tipo:', typeof proyecto);
-        console.log('🟢 largo:', proyecto ? proyecto.length : 'vacío');
-        if (proyecto) {
-            if (!mongoose.isValidObjectId(proyecto)) {
-                return res.status(400).json({ mensaje: 'proyectoAsignado inválido' });
-                
-            }
-            datos.proyectoAsignado = proyecto;
-        }
-
-        const nuevoDonante = await DonanteCorporativo.create(datos);
-
-        if (req.accepts('html')) {
-            return res.redirect('/donanteCorporativo');
-        }
-        res.status(201).json({
-            mensaje: 'Donante corporativo creado',
-            donante: nuevoDonante
-        });
-    } catch (err) {
-        manejarError(err, req, res);
-    }
+        const donante = await Donante.create(await datosDonante(req.body));
+        return esWeb(req) ? res.redirect('/donanteCorporativo') : res.status(201).json({ mensaje: 'Donante corporativo creado', donante });
+    } catch (err) { return errorRespuesta(res, err); }
 };
-
-// UPDATE
 const actualizarDonanteCorporativo = async (req, res) => {
     try {
-        const id = leerId(req);
-        if (!mongoose.isValidObjectId(id)) return idInvalido(req, res);
-
-        const cambios = {};
-        CAMPOS.forEach((c) => {
-            if (req.body[c] !== undefined) cambios[c] = req.body[c];
-        });
-
-        const proyecto = leerProyecto(req.body);
-        if (proyecto !== undefined) {
-            if (proyecto !== null && proyecto !== '' && !mongoose.isValidObjectId(proyecto)) {
-                return res.status(400).json({ mensaje: 'proyectoAsignado inválido' });
-            }
-            cambios.proyectoAsignado = proyecto || null;
-        }
-
-        const donante = await DonanteCorporativo.findByIdAndUpdate(id, cambios, {
-            new: true,
-            runValidators: true
-        });
-
-        if (!donante) {
-            return res.status(404).json({ mensaje: 'Donante corporativo no encontrado' });
-        }
-        res.json({
-            mensaje: 'Donante corporativo actualizado',
-            donante
-        });
-    } catch (err) {
-        manejarError(err, req, res);
-    }
+        const donante = await Donante.findOne(filtroId(leerId(req)));
+        if (!donante) throw fallo('Donante corporativo no encontrado', 404);
+        donante.set(await datosDonante(req.body));
+        await donante.save();
+        return esWeb(req) ? res.redirect('/donanteCorporativo') : res.json({ mensaje: 'Donante corporativo actualizado', donante });
+    } catch (err) { return errorRespuesta(res, err); }
 };
-
-// DELETE (Soporta web y API)
 const eliminarDonanteCorporativo = async (req, res) => {
     try {
-        const id = leerId(req);
-        if (!mongoose.isValidObjectId(id)) return idInvalido(req, res);
-
-        const eliminado = await DonanteCorporativo.findByIdAndDelete(id);
-
-        if (!eliminado) {
-            if (req.accepts('html')) {
-                return res.status(404).send("Error: Donante no encontrado. <a href='/donanteCorporativo'>Volver</a>");
-            }
-            return res.status(404).json({ mensaje: 'Donante corporativo no encontrado' });
-        }
-
-        if (req.accepts('html')) {
-            return res.redirect('/donanteCorporativo');
-        }
-        res.json({ mensaje: 'Donante corporativo eliminado' });
-    } catch (err) {
-        manejarError(err, req, res);
-    }
+        const donante = await Donante.findOneAndDelete(filtroId(leerId(req)));
+        if (!donante) throw fallo('Donante corporativo no encontrado', 404);
+        return esWeb(req) ? res.redirect('/donanteCorporativo') : res.json({ mensaje: 'Donante corporativo eliminado' });
+    } catch (err) { return errorRespuesta(res, err); }
 };
+module.exports = { obtenerDonanteCorporativo, obtenerDonanteCorporativoPorId,
+    formularioDonante, crearDonanteCorporativo, actualizarDonanteCorporativo, eliminarDonanteCorporativo };
 
-module.exports = {
-    obtenerDonanteCorporativo,
-    obtenerDonanteCorporativoPorId,
-    crearDonanteCorporativo,
-    actualizarDonanteCorporativo,
-    eliminarDonanteCorporativo
-};

@@ -1,35 +1,25 @@
 doctype html
-html(lang="es")
+html(lang='es')
   head
-    meta(charset="UTF-8")
-    title Donantes Corporativos - SumarImpacto
+    meta(charset='UTF-8')
+    title Donantes corporativos
   body
-    h1 Listado de Donantes Corporativos
+    h1 Donantes corporativos
     p
-      a(href="/donanteCorporativo/nuevo") + Registrar Nuevo Donante
+      a(href='/donanteCorporativo/nuevo') Registrar donante
     p
-      a(href="/donanteCorporativo/eliminar") - Eliminar un Donante
-    p
-      a(href="/") ← Volver al Inicio
-
-    if donantes && donantes.length > 0
-      table(border="1" cellpadding="5" cellspacing="0")
+      a(href='/') Volver al inicio
+    if donantes.length
+      table(border='1' cellpadding='5')
         thead
           tr
-            th ID
-            th Razón Social
-            th CUIT
-            th Rubro
-            th Persona de Contacto
-            th Email Contacto
-            th Monto Donado
-            th Moneda
-            th Proyecto Asignado ID
-            th Estado
+            each titulo in ['ID MongoDB','ID histórico','Razón social','CUIT','Rubro','Contacto','Email','Monto','Moneda','Proyecto','Estado','Acciones']
+              th= titulo
         tbody
           each d in donantes
             tr
-              td= d.idDonanteCorporativo
+              td= d._id
+              td= d.idDonanteCorporativo || '—'
               td= d.razonSocial
               td= d.cuit
               td= d.rubro
@@ -37,7 +27,12 @@ html(lang="es")
               td= d.emailContacto
               td= d.montoTotalDonado
               td= d.moneda
-              td= d.proyectoAsignadoId
+              td= d.proyectoAsignado ? d.proyectoAsignado.nombre : 'Sin proyecto'
               td= d.estado
+              td
+                a(href='/donanteCorporativo/' + d._id + '/editar') Editar
+                form(action='/donanteCorporativo/eliminar' method='POST')
+                  input(type='hidden' name='idDonante' value=d._id)
+                  button(type='submit') Eliminar
     else
-      p No hay donantes corporativos registrados actualmente.
+      p No hay donantes corporativos registrados.

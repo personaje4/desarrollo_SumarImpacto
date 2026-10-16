@@ -3,6 +3,7 @@ const assert = require('node:assert/strict');
 const pug = require('pug');
 const Proyecto = require('../models/proyectoManager');
 const app = require('../index');
+const Donante = require('../models/donanteCorporativoManager');
 
 const ejemplo = {
     idProyecto: 1, nombre: 'Proyecto de prueba', organizacion: 'Organización',
@@ -50,6 +51,7 @@ test('HTTP: rutas web, identificadores inválidos y 404 con consulta simulada', 
     // Esta simulación prueba rutas/respuestas. No demuestra conexión ni persistencia.
     t.mock.method(Proyecto, 'findOne', async () => null);
     t.mock.method(Proyecto, 'findOneAndDelete', async () => null);
+    t.mock.method(Donante, 'find', () => ({ populate: () => ({ lean: async () => [] }) }));
     const server = await new Promise(resolve => {
         const s = app.listen(0, '127.0.0.1', () => resolve(s));
     });
@@ -68,3 +70,4 @@ test('HTTP: rutas web, identificadores inválidos y 404 con consulta simulada', 
         await new Promise((resolve, reject) => server.close(e => e ? reject(e) : resolve()));
     }
 });
+

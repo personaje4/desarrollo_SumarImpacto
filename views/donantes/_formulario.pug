@@ -1,0 +1,25 @@
+- const d = donante || {};
+each campo in ['razonSocial', 'cuit', 'rubro', 'personaContacto', 'emailContacto']
+  div
+    label(for=campo)= ({razonSocial:'Razón social',cuit:'CUIT (11 dígitos)',rubro:'Rubro',personaContacto:'Persona de contacto',emailContacto:'Email de contacto'})[campo]
+    input(id=campo name=campo type=campo === 'emailContacto' ? 'email' : 'text' value=d[campo] || '' required=['razonSocial','cuit'].includes(campo))
+div
+  label(for='montoTotalDonado') Monto total donado
+  input(type='number' name='montoTotalDonado' id='montoTotalDonado' min='0' step='0.01' value=d.montoTotalDonado == null ? 0 : d.montoTotalDonado)
+div
+  label(for='moneda') Moneda
+  select(name='moneda' id='moneda')
+    each m in ['ARS','USD']
+      option(value=m selected=(d.moneda || 'ARS') === m)= m
+div
+  label(for='proyectoAsignado') Proyecto asignado
+  select(name='proyectoAsignado' id='proyectoAsignado')
+    option(value='') Sin proyecto
+    each p in proyectos
+      option(value=p._id.toString() selected=String(d.proyectoAsignado || '') === p._id.toString())= p.idProyecto + ' — ' + p.nombre
+div
+  label(for='estado') Estado
+  select(name='estado' id='estado')
+    each e in ['activo','inactivo']
+      option(value=e selected=(d.estado || 'activo') === e)= e
+button(type='submit') Guardar donante

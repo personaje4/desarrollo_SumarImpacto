@@ -6,7 +6,7 @@ Fecha: 15/10/2026.
 
 Se conserva el esquema Mongoose y el CRUD asincrónico aportados por Adriana en el PR #4, corrigiendo su integración con Express y Pug. Se toman como referencia las vistas de listado y eliminación de Proyecto del PR #3 de Gastón. Se completa el formulario de alta con todos los campos requeridos y se agrega edición web.
 
-Los archivos de Donante Corporativo no cambian: ese módulo continúa en JSON. El PR #3 incluye también vistas de donantes que esperan MongoDB; por eso no debe fusionarse completo mientras su controlador siga usando JSON.
+En el alcance original del PR #4 Donante Corporativo continuaba en JSON. El PR #5 incorpora posteriormente su migración y adapta sus vistas: consultar INTEGRACION_DONANTE.md. El PR #3 debe revisarse contra estos cambios antes de integrarse para evitar reemplazar formularios ya corregidos.
 
 ## Decisiones de integración
 
@@ -120,7 +120,7 @@ La suite recorre altas, consultas por ambos identificadores, modificación parci
 ## Límites de esta etapa
 
 - Los JSON de ejemplo no se importan automáticamente a MongoDB. La base nueva comienza vacía.
-- Los donantes todavía referencian números históricos y usan JSON. La integridad entre módulos y la política de eliminación de proyectos vinculados están pendientes de su migración; no hay borrado en cascada ni validación cruzada agregada aquí.
+- El PR #5 agrega comprobación de existencia del proyecto al asignarlo a un donante y respuesta 409 al intentar eliminar un proyecto vinculado. No hay borrado en cascada. Las comprobaciones no son una transacción: revisar los límites de concurrencia en INTEGRACION_DONANTE.md.
 - La asignación de números no es una secuencia transaccional.
 - No se incorporan autenticación, nuevos módulos ni dependencias de ejecución.
 
@@ -131,3 +131,4 @@ D3: operaciones asincrónicas con async/await. D6: routers, Pug y organización 
 ## Defensa oral
 
 Explicar la diferencia entre `_id` e `idProyecto`, el recorrido ruta → controlador → modelo → MongoDB, por qué se espera cada operación, cómo se valida una actualización parcial, por qué hay respuestas HTML y JSON, y qué prueba acredita persistencia.
+

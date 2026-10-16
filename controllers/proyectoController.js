@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Proyecto = require('../models/proyectoManager');
+const Donante = require('../models/donanteCorporativoManager');
 
 const campos = ['nombre', 'organizacion', 'descripcion', 'ubicacion', 'categoria',
     'presupuestoObjetivo', 'moneda', 'fechaInicio', 'fechaFin', 'estado',
@@ -91,8 +92,12 @@ const actualizarProyecto = async (req, res) => {
 const eliminarProyecto = async (req, res) => {
     try {
         const id = req.params.idProyecto || req.body.idProyecto;
-        const proyecto = await Proyecto.findOneAndDelete(filtroId(id));
+        const proyecto = await Proyecto.findOne(filtroId(id));
         if (!proyecto) return res.status(404).json({ mensaje: 'Proyecto no encontrado' });
+        if (await Donante.exists({ proyectoAsignado: proyecto._id })) {
+            return res.status(409).json({ mensaje: 'El proyecto tiene donantes vinculados; reasígnelos antes de eliminarlo' });
+        }
+        await Proyecto.deleteOne({ _id: proyecto._id });
         if (esWeb(req)) return res.redirect('/proyecto');
         return res.json({ mensaje: 'Proyecto eliminado' });
     } catch (error) { return responderError(res, error); }
@@ -100,3 +105,4 @@ const eliminarProyecto = async (req, res) => {
 
 module.exports = { obtenerProyecto, obtenerProyectoPorId, obtenerProyectoEditar,
     crearProyecto, actualizarProyecto, eliminarProyecto };
+

@@ -4,7 +4,7 @@ Aplicación de gestión de proyectos y donantes corporativos con Express y vista
 
 ## Avance actual
 
-El servidor espera la conexión a MongoDB antes de aceptar solicitudes. Proyecto usa un modelo Mongoose, CRUD asincrónico y vistas de alta, listado, edición y baja. Donante Corporativo todavía guarda información en JSON. Los datos JSON de ejemplo no se importan automáticamente.
+El servidor espera la conexión a MongoDB antes de aceptar solicitudes. Proyecto y Donante Corporativo usan modelos Mongoose, CRUD asincrónico y vistas de alta, listado, edición y baja. Los datos JSON de ejemplo no se importan automáticamente. La integración de Donante Corporativo se prepara en el PR #5 y se documenta en [INTEGRACION_DONANTE.md](INTEGRACION_DONANTE.md); su verificación con MongoDB real está pendiente.
 
 La integración de Proyecto se documenta en [INTEGRACION_PROYECTO.md](INTEGRACION_PROYECTO.md), con decisiones, endpoints, ejemplos para Postman y limitaciones.
 
@@ -46,7 +46,7 @@ El 10 de octubre de 2026 se ejecutó la función conectarDB desde Node.js contra
 
 ## Pendientes
 
-Migrar Donante Corporativo, resolver las referencias y la eliminación de proyectos vinculados, planificar la importación de datos y completar la documentación final. Consultar DIAGNOSTICO_TP2.md como diagnóstico histórico de la primera entrega.
+Ejecutar las pruebas de integración de Donante Corporativo y la regresión de Proyecto, revisar el PR #3 de vistas, decidir qué datos de ejemplo importar y completar la documentación final. Consultar DIAGNOSTICO_TP2.md como diagnóstico histórico de la primera entrega.
 
 ## Verificación de la integración de Proyecto (15/10/2026)
 
@@ -59,3 +59,4 @@ El 15/10/2026, Ángel ejecutó las pruebas en Windows con Node.js 24.22.0 y npm 
 Se comprobaron CRUD HTTP, formularios, identificadores numéricos y ObjectId, validaciones, duplicados y persistencia al cerrar y reabrir el servidor HTTP y la conexión Mongoose contra la misma base. No se reinició el servicio MongoDB ni se verificó la migración de Donante Corporativo.
 
 La base descartable utilizada fue `mongodb://127.0.0.1:27017/sumarimpacto_integracion_test`. La suite elimina los proyectos de esa base al comenzar y terminar. Estos resultados corresponden a la ejecución local informada por Ángel; complementan las pruebas iniciales realizadas durante la preparación de las correcciones.
+
