@@ -8,12 +8,11 @@ Aplicación web para gestionar proyectos y donantes corporativos mediante Node.j
 - Comisión: Jueves 19:15 hs - 2.º B.
 - Instancia: segundo parcial, producto mínimo viable.
 - Grupo: 4.
-- Integrantes y nombres completos: **
+- Integrantes y nombres completos:
 ●	Angel Dominguez 
 ●	Adriana Lazzeretti 
 ●	David Carlos Ruiz Flores 
-●	Gastón Escobar 
-**.
+●	Gastón Escobar.
 
 Registrar los aportes efectivamente realizados; no confundir tareas previstas con tareas terminadas.
 
