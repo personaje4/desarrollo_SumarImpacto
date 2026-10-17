@@ -9,22 +9,24 @@ Aplicación web para gestionar proyectos y donantes corporativos mediante Node.j
 - Instancia: segundo parcial, producto mínimo viable.
 - Grupo: 4.
 - Integrantes y nombres completos: **
-●	Angel Dominguez (ad29.dominguez@gmail.com)
-●	Adriana Lazzeretti (adrianalaz@gmail.com) 
-●	David Carlos Ruiz Flores (dcruizf@gmail.com)
-●	Gastón Escobar (gastonxxxx@gmail.com)
+●	Angel Dominguez 
+●	Adriana Lazzeretti 
+●	David Carlos Ruiz Flores 
+●	Gastón Escobar 
 **.
 
 Registrar los aportes efectivamente realizados; no confundir tareas previstas con tareas terminadas.
 
-| Integrante | Aporte registrado en la documentación de integración | Información por completar |
-|---|---|---|
-| Adriana | Esquema Mongoose y CRUD asincrónico inicial de Proyecto. | Nombre completo y confirmación del alcance final. |
-| David | Modelo Mongoose, CRUD, referencia a Proyecto e importador inicial de Donante Corporativo. | Nombre completo y confirmación del alcance final. |
-| Gastón | Vistas de listado y eliminación de Proyecto tomadas como referencia. | Nombre completo y vistas efectivamente integradas. |
-| Ángel | Ejecución y comunicación de pruebas de integración del 15/10/2026. | Nombre completo y otros aportes, si corresponden. |
+### Integrantes y responsabilidades
 
-La distribución anterior se basa en los documentos de integración del repositorio. El equipo debe completarla y validarla antes de entregar, incluyendo a todos sus integrantes.
+| Integrante | Responsabilidad acordada | Aportes registrados en GitHub |
+|---|---|---|
+| **Angel Dominguez** | Coordinación, conexión a MongoDB, integración de módulos, verificación y reunión de la documentación. | Configuración de la conexión a MongoDB y del arranque del servidor. Recuperación y organización del repositorio. Integración y corrección de los aportes de Proyecto y Donante Corporativo, incluyendo controladores, validaciones, referencias y vistas. Incorporación de pruebas automatizadas, registro de resultados, documentación técnica y actualización del README. |
+| **Adriana Lazzeretti** | Migración del módulo Proyecto a MongoDB con Mongoose, validaciones y operaciones asincrónicas. | Aporte inicial de la migración de Proyecto mediante modificaciones en el modelo, controlador y rutas, posteriormente integrado y ajustado en la versión conjunta. |
+| **David Carlos Ruiz Flores** | Migración del módulo Donante Corporativo a MongoDB con Mongoose, validaciones y operaciones asincrónicas. | Aporte inicial del modelo, controlador y rutas de Donante Corporativo, referencia a Proyecto y script de importación de datos, posteriormente integrados y ajustados en la versión conjunta. |
+| **Gastón Escobar** | Adaptación de vistas Pug y coordinación de las pruebas manuales previstas. | Aportes de adaptación de formularios y listados Pug de Proyecto y Donante Corporativo. En la integración final se incorporó la confirmación antes de eliminar donantes, conservando las adaptaciones necesarias para los modelos y controladores actuales. |
+
+Los aportes se integraron en una versión común. Las responsabilidades de documentación, explicación del trabajo, revisión final y entrega individual corresponden a todos los integrantes, según el cronograma acordado.
 
 ## Objetivo, problema y alcance
 
