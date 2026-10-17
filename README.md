@@ -1,72 +1,355 @@
-# SumarImpacto segunda entrega
+# SumarImpacto - Segundo parcial de Desarrollo Web Back End
 
-Aplicación de gestión de proyectos y donantes corporativos con Express y vistas Pug.
+Aplicación web para gestionar proyectos y donantes corporativos mediante Node.js, Express, vistas Pug y persistencia en MongoDB con Mongoose.
 
-## Avance actual
+## Identificación y equipo
 
-El servidor espera la conexión a MongoDB antes de aceptar solicitudes. Proyecto y Donante Corporativo usan modelos Mongoose, CRUD asincrónico y vistas de alta, listado, edición y baja. Los datos JSON de ejemplo no se importan automáticamente. La integración de Donante Corporativo se prepara en el PR #5 y se documenta en [INTEGRACION_DONANTE.md](INTEGRACION_DONANTE.md); sus pruebas de integración con MongoDB real fueron aprobadas en el equipo de Ángel el 15/10/2026.
+- Institución: IFST N.º 29.
+- Comisión: Jueves 19:15 hs - 2.º B.
+- Instancia: segundo parcial, producto mínimo viable.
+- Grupo: 4.
+- Integrantes y nombres completos: **
+●	Angel Dominguez (ad29.dominguez@gmail.com)
+●	Adriana Lazzeretti (adrianalaz@gmail.com) 
+●	David Carlos Ruiz Flores (dcruizf@gmail.com)
+●	Gastón Escobar (gastonxxxx@gmail.com)
+**.
 
-La integración de Proyecto se documenta en [INTEGRACION_PROYECTO.md](INTEGRACION_PROYECTO.md), con decisiones, endpoints, ejemplos para Postman y limitaciones.
+Registrar los aportes efectivamente realizados; no confundir tareas previstas con tareas terminadas.
+
+| Integrante | Aporte registrado en la documentación de integración | Información por completar |
+|---|---|---|
+| Adriana | Esquema Mongoose y CRUD asincrónico inicial de Proyecto. | Nombre completo y confirmación del alcance final. |
+| David | Modelo Mongoose, CRUD, referencia a Proyecto e importador inicial de Donante Corporativo. | Nombre completo y confirmación del alcance final. |
+| Gastón | Vistas de listado y eliminación de Proyecto tomadas como referencia. | Nombre completo y vistas efectivamente integradas. |
+| Ángel | Ejecución y comunicación de pruebas de integración del 15/10/2026. | Nombre completo y otros aportes, si corresponden. |
+
+La distribución anterior se basa en los documentos de integración del repositorio. El equipo debe completarla y validarla antes de entregar, incluyendo a todos sus integrantes.
+
+## Objetivo, problema y alcance
+
+Centralizar el registro de proyectos y donantes corporativos, permitir su consulta y actualización, y relacionar un donante con un proyecto existente.
+
+El alcance implementado comprende:
+- Alta, listado, consulta individual, modificación y eliminación de proyectos.
+- Alta, listado, consulta individual, modificación y eliminación de donantes corporativos.
+- Formularios web y endpoints con respuestas JSON.
+- Validación en el servidor y persistencia en MongoDB.
+- Asignación, reasignación y desvinculación de un donante respecto de un proyecto.
+- Rechazo de la eliminación de proyectos que tengan donantes vinculados.
+
+La consigna general no detalla todos los requisitos funcionales del caso SumarImpacto. El equipo debe contrastar este alcance con su especificación particular antes de la entrega.
+
+## Relación con la consigna y la cursada
+
+| Requisito general | Implementación | Material relacionado |
+|---|---|---|
+| Arquitectura modular | Carpetas de rutas, controladores, modelos, vistas y configuración. | D6: Introducción a Express. |
+| MongoDB y Mongoose | Conexión, esquemas, modelos, validaciones y referencia entre documentos. | D8: Bases de datos en Express. |
+| Middlewares, rutas y errores | Procesamiento JSON y formularios; routers; respuestas de validación, inexistencia, duplicados y fallos internos. | D6: Introducción a Express. |
+| Validaciones simples | Reglas de los esquemas y comprobación de proyectos referenciados. | D8: Bases de datos en Express. |
+| Programación asincrónica | Operaciones con Mongoose mediante async/await. | D3: Asincronismo Web. |
+| API y comprobación HTTP | Métodos GET, POST, PUT y DELETE; ejemplos para Postman y pruebas de integración. | D7: API REST básica con Node y Express. |
+| Ejecución y módulos | Node.js, npm y CommonJS. | D5: Fundamentos de Node.js. |
+
+## Tecnologías y dependencias
+
+- Node.js: se recomienda la versión 24 LTS utilizada como referencia del proyecto.
+- npm: instalación reproducible mediante package-lock.json.
+- MongoDB: servicio local o instancia accesible.
+- Express: servidor, rutas y middlewares.
+- Mongoose: conexión, modelos y validación.
+- Pug: plantillas HTML.
+- dotenv: carga de variables de entorno.
+- node:test y node:assert: pruebas incluidas en Node.js.
+
+Las versiones de dependencias se encuentran en package.json y package-lock.json. No se necesita instalar Nodemon.
 
 ## Instalación y ejecución
 
-Requisitos: Node.js 24 LTS con npm y MongoDB local iniciado como servicio.
-
-Desde esta carpeta:
+### 1. Descargar el proyecto
 
 ```sh
-npm install
+git clone https://github.com/personaje4/desarrollo_SumarImpacto.git
+cd desarrollo_SumarImpacto
+npm ci
 ```
 
-Copiar .env.example a .env si todavía no existe. Configuración local:
+También puede descargarse el ZIP desde GitHub, descomprimirlo e instalar las dependencias dentro de la carpeta del proyecto.
+
+### 2. Configurar el entorno
+
+Copiar .env.example a .env. En PowerShell:
+
+```powershell
+Copy-Item .env.example .env
+```
+
+Contenido para MongoDB local:
 
 ```dotenv
 PORT=3000
 MONGODB_URI=mongodb://127.0.0.1:27017/sumarimpacto
 ```
 
-El archivo .env está excluido de Git. Si se usa Atlas, no publicar la URI con credenciales.
+PORT indica el puerto HTTP; MONGODB_URI identifica el servidor y la base de datos. Para Atlas, utilizar la URI correspondiente y configurar el acceso a la instancia. No publicar credenciales. El archivo .env está excluido de Git.
+
+### 3. Iniciar MongoDB y la aplicación
+
+Con MongoDB disponible:
 
 ```sh
 npm start
 ```
 
-Abrir http://localhost:3000. Para desarrollo, `npm run dev` ejecuta `node --watch index.js` y reinicia el servidor al cambiar módulos JavaScript. No se requiere Nodemon.
+Abrir http://localhost:3000. Para reiniciar automáticamente ante cambios en módulos JavaScript:
 
-## Archivos de esta etapa
+```sh
+npm run dev
+```
 
-- config/database.js: conecta con Mongoose usando MONGODB_URI y limita el tiempo de selección del servidor a cinco segundos.
-- index.js: carga la configuración con dotenv, espera conectarDB y luego inicia Express. Informa fallos de conexión o del servidor.
-- .env.example: ejemplo público de configuración.
-- package.json y package-lock.json: dependencias y comandos de ejecución.
+El servidor espera la conexión a MongoDB antes de aceptar solicitudes. Si falta MONGODB_URI o falla la conexión, informa el error y no inicia la escucha HTTP.
 
-## Verificación realizada
+Una base nueva comienza vacía. Los archivos de data/ no se importan automáticamente.
 
-El 10 de octubre de 2026 se ejecutó la función conectarDB desde Node.js contra mongodb://127.0.0.1:27017/sumarimpacto. Resultado obtenido: «Conexión a MongoDB establecida», cierre de la conexión y salida con código 0. Esta comprobación inicial no escribió documentos. Las pruebas CRUD y de persistencia del 15/10/2026 se registran a continuación.
+## Estructura y responsabilidades
 
-## Pendientes
+```text
+config/database.js                 Conexión a MongoDB
+index.js                           Configuración y arranque de Express
+routes/                            Rutas de Proyecto y Donante Corporativo
+controllers/                       Operaciones CRUD, respuestas y errores
+models/                            Esquemas y modelos Mongoose
+views/                             Inicio y formularios/listados Pug
+data/                              Datos JSON de ejemplo
+scripts/migrarDonantes.js           Verificación e importación optativa
+tests/                             Pruebas locales y de integración
+INTEGRACION_PROYECTO.md             Decisiones y ejemplos de Proyecto
+INTEGRACION_DONANTE.md              Decisiones e importación de Donante
+DIAGNOSTICO_TP2.md                  Diagnóstico histórico, no estado actual
+```
 
-Publicar y revisar las correcciones del PR #5 antes de fusionarlo, revisar el PR #3 de vistas, decidir qué datos de ejemplo importar y completar la documentación final. Consultar DIAGNOSTICO_TP2.md como diagnóstico histórico de la primera entrega.
+Aunque sus nombres terminan en Manager, los archivos de models/ exportan modelos Mongoose. El CRUD habitual ya no lee ni escribe los JSON.
 
-## Verificación de la integración de Proyecto (15/10/2026)
+## Funcionamiento y decisiones
 
-El 15/10/2026, se ejecutó las pruebas en Windows con Node.js 24.22.0 y npm 11.19.1, después de actualizar las dependencias y retirar Nodemon. Los resultados compartidos fueron:
+Una solicitud llega a una ruta, que invoca un controlador. El controlador consulta o modifica documentos mediante el modelo Mongoose y devuelve JSON o renderiza/redirige una vista Pug.
 
-- `node --test tests/proyecto.test.js`: 5 pruebas aprobadas, 0 fallidas.
-- `node --test tests/proyecto.integration.test.js`: 15 pruebas aprobadas, 0 fallidas (14 casos y la prueba contenedora).
-- Última auditoría informada por npm: 0 vulnerabilidades conocidas en las dependencias instaladas.
+Se espera cada operación de base de datos con async/await y se capturan errores en los controladores. Los middlewares de Express procesan JSON y formularios. Actualmente no existe un middleware global propio de errores ni de rutas inexistentes.
 
-Se comprobaron CRUD HTTP, formularios, identificadores numéricos y ObjectId, validaciones, duplicados y persistencia al cerrar y reabrir el servidor HTTP y la conexión Mongoose contra la misma base. No se reinició el servicio MongoDB ni se verificó la migración de Donante Corporativo.
+- MongoDB genera el identificador _id.
+- Proyecto conserva además idProyecto, un entero positivo único. Si se omite al crear, se calcula el máximo existente más uno.
+- Las rutas de Proyecto aceptan ObjectId o idProyecto.
+- Los donantes nuevos se identifican por _id. idDonanteCorporativo se conserva para datos históricos importados; las altas HTTP no lo asignan ni lo aceptan como identificador nuevo.
+- Los identificadores existentes no se modifican por HTTP.
+- Al eliminar un proyecto vinculado, se responde 409. Primero deben reasignarse o desvincularse sus donantes.
 
-La base descartable utilizada fue `mongodb://127.0.0.1:27017/sumarimpacto_integracion_test`. La suite elimina los proyectos de esa base al comenzar y terminar. Estos resultados corresponden a la ejecución local informada por Ángel; complementan las pruebas iniciales realizadas durante la preparación de las correcciones.
+## Modelo de datos
 
+### Proyecto
 
-## Verificación conjunta de Proyecto y Donante (15/10/2026)
+Colección predeterminada de Mongoose: proyectos.
 
-Se ejecutó en Windows, con Node.js 24.20.0 y npm 11.19.0, las correcciones preparadas para el PR #5. Resultados compartidos en la terminal:
+| Campo | Tipo y regla principal |
+|---|---|
+| _id | ObjectId generado por MongoDB. |
+| idProyecto | Número entero positivo, obligatorio y único. |
+| nombre, organizacion, descripcion, ubicacion, categoria, responsable | Texto obligatorio, sin espacios vacíos. |
+| presupuestoObjetivo | Número obligatorio mayor o igual que cero. |
+| moneda | ARS o USD, obligatoria. |
+| fechaInicio | Fecha obligatoria. |
+| fechaFin | Fecha opcional; null si está vacía; no anterior a fechaInicio. |
+| estado | planificación, en ejecución, finalizado o cancelado; normalizado a minúsculas. |
+| email_responsable | Correo obligatorio con validación de formato simple. |
+| createdAt, updatedAt | Fechas automáticas de creación y modificación. |
 
-- `node --test tests/proyecto.test.js tests/donante.test.js`: 10 aprobadas, 0 fallidas.
-- `node --test tests/donante.integration.test.js`: 12 aprobadas, 0 fallidas (11 casos y la prueba contenedora).
-- `node --test tests/proyecto.integration.test.js`: 15 aprobadas, 0 fallidas (14 casos y la prueba contenedora).
+### Donante Corporativo
 
-Ambas suites de integración se ejecutaron por separado contra `mongodb://127.0.0.1:27017/sumarimpacto_donante_integracion_test`. Se verificaron CRUD, formularios, vínculos existentes, rechazo de proyectos inexistentes, CUIT duplicado, bloqueo de eliminación de proyectos vinculados y persistencia al reabrir HTTP/Mongoose. No se reinició mongod ni se importaron los JSON de ejemplo mediante el CLI. Los resultados corresponden a la ejecución local informada por Ángel y no a un flujo automático de GitHub Actions.
+Colección predeterminada de Mongoose: donantecorporativos.
+
+| Campo | Tipo y regla principal |
+|---|---|
+| _id | ObjectId generado por MongoDB. |
+| idDonanteCorporativo | Número histórico opcional, entero positivo. |
+| razonSocial | Texto obligatorio. |
+| cuit | Texto obligatorio y único de 11 dígitos; elimina guiones y espacios. |
+| rubro, personaContacto | Texto opcional. |
+| emailContacto | Correo opcional con validación simple; se normaliza a minúsculas. |
+| montoTotalDonado | Número finito no negativo; valor inicial 0. |
+| moneda | ARS o USD; valor inicial ARS. |
+| estado | activo o inactivo; valor inicial activo. |
+| proyectoAsignado | ObjectId opcional con referencia a Proyecto; valor inicial null. |
+| createdAt, updatedAt | Fechas automáticas. |
+
+Un proyecto puede tener varios donantes; cada donante puede tener un proyecto asignado o ninguno. No se verifica el dígito fiscal del CUIT ni su existencia ante ARCA.
+
+## API y uso con Postman
+
+Base local: http://localhost:3000.
+
+Para consultas JSON, enviar Accept: application/json. Para altas y modificaciones, seleccionar Body → raw → JSON; Postman debe enviar Content-Type: application/json.
+
+| Método | Ruta | Entrada | Respuesta satisfactoria |
+|---|---|---|---|
+| GET | /proyecto | Sin cuerpo. | 200, arreglo de proyectos. |
+| GET | /proyecto/:idProyecto | ObjectId o número en la ruta. | 200, documento. |
+| POST | /proyecto | JSON de proyecto. | 201, { mensaje, proyecto }. |
+| PUT | /proyecto/:idProyecto | JSON con campos a modificar. | 200, { mensaje, proyecto }. |
+| DELETE | /proyecto/:idProyecto | Identificador en la ruta. | 200, { mensaje }. |
+| GET | /donanteCorporativo | Sin cuerpo. | 200, arreglo de donantes con proyecto poblado. |
+| GET | /donanteCorporativo/:idDonante | ObjectId o número histórico. | 200, documento con proyecto poblado. |
+| POST | /donanteCorporativo | JSON de donante. | 201, { mensaje, donante }. |
+| PUT | /donanteCorporativo/:idDonante | JSON con campos a modificar. | 200, { mensaje, donante }. |
+| DELETE | /donanteCorporativo/:idDonante | Identificador en la ruta. | 200, { mensaje }. |
+
+Las actualizaciones aceptan campos parciales. Los errores de los controladores usan { mensaje }: 400 para datos o identificadores inválidos, 404 para registros inexistentes, 409 para duplicados o proyecto con donantes y 500 para fallos internos. El detalle interno de un error 500 no se envía al cliente. Los errores del parser de Express y las rutas desconocidas utilizan su tratamiento predeterminado.
+
+### Ejemplo: crear y modificar un proyecto
+
+POST /proyecto:
+
+```json
+{
+  "nombre": "Apoyo escolar",
+  "organizacion": "Asociación de ejemplo",
+  "descripcion": "Clases de apoyo para la comunidad",
+  "ubicacion": "Buenos Aires",
+  "categoria": "Educación",
+  "presupuestoObjetivo": 10000,
+  "moneda": "ARS",
+  "fechaInicio": "2026-10-17",
+  "fechaFin": "",
+  "estado": "planificación",
+  "responsable": "Persona de ejemplo",
+  "email_responsable": "responsable@example.com"
+}
+```
+
+Guardar proyecto._id de la respuesta. Consultar GET /proyecto/ID_OBTENIDO y modificar con PUT /proyecto/ID_OBTENIDO:
+
+```json
+{ "nombre": "Apoyo escolar actualizado" }
+```
+
+### Ejemplo: crear y vincular un donante
+
+POST /donanteCorporativo; reemplazar ID_DEL_PROYECTO por el _id real obtenido:
+
+```json
+{
+  "razonSocial": "Empresa de ejemplo",
+  "cuit": "30-12345678-9",
+  "rubro": "Servicios",
+  "personaContacto": "Contacto de ejemplo",
+  "emailContacto": "contacto@example.com",
+  "montoTotalDonado": 5000,
+  "moneda": "ARS",
+  "proyectoAsignado": "ID_DEL_PROYECTO",
+  "estado": "activo"
+}
+```
+
+Es un CUIT ilustrativo para probar formato, no una validación fiscal. La API también acepta proyectoAsignadoId como alias y puede resolver el número idProyecto.
+
+Guardar donante._id. Para desvincularlo, PUT /donanteCorporativo/ID_DEL_DONANTE:
+
+```json
+{ "proyectoAsignado": null }
+```
+
+Omitir el campo al editar conserva el vínculo; null o cadena vacía lo elimina. Una referencia inexistente devuelve 400.
+
+### Formularios web
+
+| Método | Ruta | Función |
+|---|---|---|
+| GET | / | Inicio. |
+| GET | /proyecto y /donanteCorporativo | Listados al solicitar HTML. |
+| GET | /proyecto/nuevo y /donanteCorporativo/nuevo | Formularios de alta. |
+| GET | /proyecto/:idProyecto/editar y /donanteCorporativo/:idDonante/editar | Formularios de edición. |
+| POST | Las mismas rutas de edición | Guarda cambios y redirige al listado. |
+| GET | /proyecto/eliminar y /donanteCorporativo/eliminar | Formularios de baja. |
+| POST | /proyecto/eliminar | Recibe idProyecto. |
+| POST | /donanteCorporativo/eliminar | Recibe idDonante. |
+
+Las altas web utilizan POST sobre las rutas base. Las escrituras web satisfactorias redirigen con 302; los errores de validación se muestran como JSON.
+
+Más detalles: [Proyecto](INTEGRACION_PROYECTO.md) y [Donante Corporativo](INTEGRACION_DONANTE.md).
+
+## Pruebas y resultados
+
+### Reproducir
+
+Pruebas locales, con consultas simuladas cuando corresponde:
+
+```sh
+node --test tests/proyecto.test.js tests/donante.test.js
+```
+
+Para integración, iniciar MongoDB y definir una base **exclusiva y descartable**, cuyo nombre termine en _test. Las suites eliminan datos al comenzar y terminar; Donante elimina documentos de ambos modelos. Nunca utilizar una base con información real.
+
+En PowerShell, ejecutar las suites una por vez:
+
+```powershell
+$env:MONGODB_URI_TEST="mongodb://127.0.0.1:27017/sumarimpacto_integracion_test"
+node --test tests/donante.integration.test.js
+node --test tests/proyecto.integration.test.js
+```
+
+### Verificación del 17/10/2026
+
+Se ejecutaron los archivos de prueba de la versión revisada de main en una copia local, utilizando dependencias ya instaladas y MongoDB local real. No se comprobó una instalación limpia mediante npm ci.
+
+| Ejecución | Resultado obtenido |
+|---|---|
+| proyecto.test.js y donante.test.js | 10 pruebas aprobadas, 0 fallidas. |
+| donante.integration.test.js | 12 aprobadas, 0 fallidas: 11 casos y una prueba contenedora. |
+| proyecto.integration.test.js | 15 aprobadas, 0 fallidas: 14 casos y una prueba contenedora. |
+
+Base exclusiva utilizada: sumarimpacto_revision_20261017_test. Las ejecuciones fueron secuenciales. La evidencia disponible fue la salida de terminal de la revisión; no se adjuntan capturas ni un informe de CI en este repositorio.
+
+| Caso y entrada | Resultado esperado | Resultado obtenido |
+|---|---|---|
+| Alta con datos válidos | 201 y documento persistido. | Aprobado en ambos módulos. |
+| Campos inválidos, montos negativos o fechas incoherentes | 400, sin alta inválida. | Aprobado para los casos de las suites. |
+| Identificador inválido o registro inexistente | 400 o 404, respectivamente. | Aprobado. |
+| Número de proyecto o CUIT duplicado | 409. | Aprobado. |
+| Donante con proyecto inexistente | 400. | Aprobado. |
+| Eliminación de proyecto vinculado | 409 y conservación del proyecto. | Aprobado. |
+| Modificación y eliminación por API/formulario | Respuesta o redirección prevista y cambio persistido. | Aprobado. |
+| Cierre y reapertura de HTTP y conexión Mongoose | Conservación de documentos. | Aprobado. |
+| Preparación de importación e inserción repetida | Referencias válidas y ausencia de duplicación por CUIT. | Aprobado en los casos de integración. |
+
+Las pruebas locales no demuestran persistencia. Las de integración sí comprobaron persistencia al reabrir HTTP/Mongoose; no reiniciaron el servicio mongod ni ejecutaron el importador CLI completo contra los JSON de ejemplo. Los resultados previos del 15/10/2026 están registrados en los documentos de integración.
+
+## Importación optativa de ejemplos
+
+No es necesaria para utilizar ni probar el CRUD. Antes de importar donantes deben existir los proyectos con los números históricos referenciados en data/donanteCorporativo.json.
+
+Verificar el archivo y las referencias sin insertar donantes:
+
+```sh
+node scripts/migrarDonantes.js
+```
+
+Solo después de comprobar la base de destino de MONGODB_URI y respaldarla, aplicar:
+
+```sh
+node scripts/migrarDonantes.js --aplicar
+```
+
+El script usa el CUIT normalizado como clave y conserva documentos existentes. No importa proyectos, no normaliza automáticamente documentos antiguos y no ejecuta una transacción de lote; un fallo de escritura puede dejar una importación parcial.
+
+## Dificultades, soluciones y limitaciones
+
+- Se reemplazó la persistencia JSON del CRUD por modelos y operaciones Mongoose.
+- Se adaptaron las vistas a ObjectId y se conservaron identificadores históricos donde corresponde.
+- Se unificaron formatos de CUIT, estados y fechas, y se agregaron validaciones en el servidor.
+- La referencia a Proyecto se verifica antes de guardar donantes y se bloquea la baja de proyectos vinculados.
+- Las comprobaciones de referencias y las bajas son operaciones separadas: no garantizan integridad ante todas las carreras concurrentes.
+- El cálculo máximo más uno de idProyecto puede competir entre altas simultáneas; un duplicado devuelve 409 y requiere reintento.
+- Los formularios no conservan automáticamente sus datos ante un error de validación.
+- No hay autenticación, autorización ni transacciones. No se agregaron como requisitos de esta instancia.
+- Falta comprobar la instalación desde cero y completar los entregables documentales.
+
+El aprendizaje central es comprender el recorrido de una solicitud, diferenciar validación de persistencia y respaldar las afirmaciones de funcionamiento con pruebas reproducibles.
