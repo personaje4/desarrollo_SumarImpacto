@@ -14,7 +14,6 @@ Aplicación web para gestionar proyectos y donantes corporativos mediante Node.j
 ●	David Carlos Ruiz Flores 
 ●	Gastón Escobar.
 
-Registrar los aportes efectivamente realizados; no confundir tareas previstas con tareas terminadas.
 
 ### Integrantes y responsabilidades
 
@@ -39,7 +38,6 @@ El alcance implementado comprende:
 - Asignación, reasignación y desvinculación de un donante respecto de un proyecto.
 - Rechazo de la eliminación de proyectos que tengan donantes vinculados.
 
-La consigna general no detalla todos los requisitos funcionales del caso SumarImpacto. El equipo debe contrastar este alcance con su especificación particular antes de la entrega.
 
 ## Relación con la consigna y la cursada
 
