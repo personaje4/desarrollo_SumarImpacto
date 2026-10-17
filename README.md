@@ -50,7 +50,7 @@ Publicar y revisar las correcciones del PR #5 antes de fusionarlo, revisar el PR
 
 ## Verificación de la integración de Proyecto (15/10/2026)
 
-El 15/10/2026, Ángel ejecutó las pruebas en Windows con Node.js 24.22.0 y npm 11.19.1, después de actualizar las dependencias y retirar Nodemon. Los resultados compartidos fueron:
+El 15/10/2026, se ejecutó las pruebas en Windows con Node.js 24.22.0 y npm 11.19.1, después de actualizar las dependencias y retirar Nodemon. Los resultados compartidos fueron:
 
 - `node --test tests/proyecto.test.js`: 5 pruebas aprobadas, 0 fallidas.
 - `node --test tests/proyecto.integration.test.js`: 15 pruebas aprobadas, 0 fallidas (14 casos y la prueba contenedora).
@@ -63,7 +63,7 @@ La base descartable utilizada fue `mongodb://127.0.0.1:27017/sumarimpacto_integr
 
 ## Verificación conjunta de Proyecto y Donante (15/10/2026)
 
-Ángel ejecutó en Windows, con Node.js 24.20.0 y npm 11.19.0, las correcciones preparadas para el PR #5. Resultados compartidos en la terminal:
+Se ejecutó en Windows, con Node.js 24.20.0 y npm 11.19.0, las correcciones preparadas para el PR #5. Resultados compartidos en la terminal:
 
 - `node --test tests/proyecto.test.js tests/donante.test.js`: 10 aprobadas, 0 fallidas.
 - `node --test tests/donante.integration.test.js`: 12 aprobadas, 0 fallidas (11 casos y la prueba contenedora).
