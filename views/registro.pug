@@ -1,0 +1,39 @@
+doctype html
+html(lang="es")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    title Registro
+    link(rel="stylesheet", href="/styles.css")
+
+  body
+    header
+      h1 Registro de usuario
+
+    if error
+      p(style="color: red") #{error}
+
+    form(action="/registro", method="POST")
+      label Nombre:
+      input(type="text", name="nombre", required)
+
+      br
+      br
+
+      label Email:
+      input(type="email", name="email", required)
+
+      br
+      br
+
+      label Password:
+      input(type="password", name="password", required)
+
+      br
+      br
+
+      button(type="submit") Crear usuario
+
+    p
+      | Ya tenes usuario?
+      a(href="/login")  Inicia sesion

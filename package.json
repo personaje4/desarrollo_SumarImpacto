@@ -1,23 +1,21 @@
 {
-  "name": "sumarimpacto",
-  "version": "3.0.0-dev.1",
+  "name": "crud_node",
+  "version": "1.0.0",
   "main": "index.js",
+  "type": "commonjs",
   "scripts": {
-    "dev": "node --watch index.js",
-    "start": "node index.js",
-    "test": "node --test tests/proyecto.test.js tests/donante.test.js",
-    "db:check": "node scripts/comprobarConexion.js"
+    "dev": "nodemon index.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "dotenv": "^18.0.7",
+    "dotenv": "^17.4.2",
     "express": "^5.2.1",
-    "mongoose": "^9.11.1",
+    "mongoose": "^9.6.1",
     "pug": "^3.0.4"
   },
-  "description": "Proyecto y Donante Corporativo - base de trabajo para la tercera entrega",
-  "engines": {
-    "node": ">=24 <25"
-  }
+  "devDependencies": {
+    "nodemon": "^3.1.11"
+  },
+  "description": "- Node.js\r - Express\r - Pug\r - JSON\r - Fetch API \r - Async/Await"
 }

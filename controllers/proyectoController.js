@@ -105,4 +105,3 @@ const eliminarProyecto = async (req, res) => {
 
 module.exports = { obtenerProyecto, obtenerProyectoPorId, obtenerProyectoEditar,
     crearProyecto, actualizarProyecto, eliminarProyecto };
-

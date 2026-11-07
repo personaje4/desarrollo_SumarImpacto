@@ -60,7 +60,7 @@ const formularioDonante = async (req, res) => {
 const crearDonanteCorporativo = async (req, res) => {
     try {
         const donante = await Donante.create(await datosDonante(req.body));
-        return esWeb(req) ? res.redirect('/donanteCorporativo') : res.status(201).json({ mensaje: 'Donante corporativo creado', donante });
+        return esWeb(req) ? res.redirect('/donantes-corporativos') : res.status(201).json({ mensaje: 'Donante corporativo creado', donante });
     } catch (err) { return errorRespuesta(res, err); }
 };
 const actualizarDonanteCorporativo = async (req, res) => {
@@ -69,16 +69,22 @@ const actualizarDonanteCorporativo = async (req, res) => {
         if (!donante) throw fallo('Donante corporativo no encontrado', 404);
         donante.set(await datosDonante(req.body));
         await donante.save();
-        return esWeb(req) ? res.redirect('/donanteCorporativo') : res.json({ mensaje: 'Donante corporativo actualizado', donante });
+        return esWeb(req) ? res.redirect('/donantes-corporativos') : res.json({ mensaje: 'Donante corporativo actualizado', donante });
     } catch (err) { return errorRespuesta(res, err); }
 };
 const eliminarDonanteCorporativo = async (req, res) => {
     try {
         const donante = await Donante.findOneAndDelete(filtroId(leerId(req)));
         if (!donante) throw fallo('Donante corporativo no encontrado', 404);
-        return esWeb(req) ? res.redirect('/donanteCorporativo') : res.json({ mensaje: 'Donante corporativo eliminado' });
+        return esWeb(req) ? res.redirect('/donantes-corporativos') : res.json({ mensaje: 'Donante corporativo eliminado' });
     } catch (err) { return errorRespuesta(res, err); }
 };
-module.exports = { obtenerDonanteCorporativo, obtenerDonanteCorporativoPorId,
-    formularioDonante, crearDonanteCorporativo, actualizarDonanteCorporativo, eliminarDonanteCorporativo };
 
+module.exports = {
+    obtenerDonanteCorporativo,
+    obtenerDonanteCorporativoPorId,
+    formularioDonante,
+    crearDonanteCorporativo,
+    actualizarDonanteCorporativo,
+    eliminarDonanteCorporativo
+};

@@ -11,4 +11,10 @@ html(lang="es")
         li
           a(href="/proyecto") Ver Proyectos
         li
-          a(href="/donanteCorporativo") Ver Donantes Corporativos
+          a(href="/donantes-corporativos") Ver Donantes Corporativos
+    if usuario
+      p Hola, #{usuario.nombre} (#{usuario.rol})
+      form(method="POST" action="/logout")
+        button(type="submit") Cerrar sesión
+    else
+      a(href="/login") Iniciar sesión
