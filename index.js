@@ -1,44 +1,46 @@
-require('dotenv').config({ path: require('path').join(__dirname, '.env') });
 const express = require("express");
-const conectarDB = require('./config/database');
-const app = express();
-const PORT = process.env.PORT || 3000;
-
+const dotenv = require("dotenv");
+const { conectarDB } = require("./config/db");
+const authRoutes = require("./routes/authRoutes");
 const proyectoRoutes = require("./routes/proyectoRoutes");
 const donanteCorporativoRoutes = require("./routes/donanteCorporativoRoutes");
+const { protegerRuta } = require("./middlewares/authMiddleware");
 
-// Middleware para procesar JSON y formularios HTML
+dotenv.config();
+
+const app = express();
+
+const PORT = process.env.PORT || 3000;
+
+// Middlewares para procesar JSON y formularios HTML
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Configurar motor de plantillas Pug
-app.set("view engine", "pug");
-app.set("views", require('path').join(__dirname, 'views'));
+// Servir archivos estáticos
+app.use(express.static("public"));
 
-// Ruta principal del sitio (Inicio)
-app.get("/", (req, res) => {
+// Configuración del motor de vistas Pug
+app.set("view engine", "pug");
+app.set("views", "./views");
+
+// Ruta raíz: si está autenticado muestra la pantalla de inicio; si no, protege y redirige al login
+app.get("/", protegerRuta, (req, res) => {
   res.render("index");
 });
 
-// usar rutas agrupadas
-app.use("/proyecto", proyectoRoutes);
-app.use("/donanteCorporativo", donanteCorporativoRoutes);
+// Rutas de autenticación (login, registro, logout)
+app.use("/", authRoutes);
 
-async function iniciarServidor() {
-  try {
-    await conectarDB();
-    app.listen(PORT, () => {
-      console.log('Servidor disponible en http://localhost:' + PORT);
-    }).on('error', (error) => {
-      console.error('No se pudo iniciar el servidor:', error.message);
-      require('mongoose').disconnect().finally(() => { process.exitCode = 1; });
-    });
-  } catch (error) {
-    console.error('No se pudo iniciar la aplicación:', error.message);
-    process.exitCode = 1;
-  }
+// Rutas protegidas de los módulos principales
+app.use("/proyecto", protegerRuta, proyectoRoutes);
+app.use("/donantes-corporativos", protegerRuta, donanteCorporativoRoutes);
+
+async function iniciar() {
+  await conectarDB();
+
+  app.listen(PORT, () => {
+    console.log("Servidor corriendo en puerto " + PORT);
+  });
 }
 
-if (require.main === module) iniciarServidor();
-
-module.exports = app;
+iniciar();

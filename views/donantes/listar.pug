@@ -2,18 +2,23 @@ doctype html
 html(lang='es')
   head
     meta(charset='UTF-8')
-    title Donantes corporativos
+    title Donantes corporativos - SumarImpacto
   body
+    include ../_nav.pug
+
     h1 Donantes corporativos
-    p
-      a(href='/donanteCorporativo/nuevo') Registrar donante
-    p
-      a(href='/') Volver al inicio
-    if donantes.length
-      table(border='1' cellpadding='5')
+
+    if usuario && usuario.rol === 'admin'
+      p
+        a(href='/donantes-corporativos/nuevo') + Registrar donante
+
+    if donantes && donantes.length
+      table(border='1' cellpadding='5' cellspacing='0')
         thead
+          - const columnas = ['ID MongoDB','ID histórico','Razón social','CUIT','Rubro','Contacto','Email','Monto','Moneda','Proyecto','Estado']
+          - if (usuario && usuario.rol === 'admin') columnas.push('Acciones')
           tr
-            each titulo in ['ID MongoDB','ID histórico','Razón social','CUIT','Rubro','Contacto','Email','Monto','Moneda','Proyecto','Estado','Acciones']
+            each titulo in columnas
               th= titulo
         tbody
           each d in donantes
@@ -27,12 +32,17 @@ html(lang='es')
               td= d.emailContacto
               td= d.montoTotalDonado
               td= d.moneda
-              td= d.proyectoAsignado ? d.proyectoAsignado.nombre : 'Sin proyecto'
+              td= d.proyectoAsignado ? (d.proyectoAsignado.nombre || d.proyectoAsignado) : 'Sin proyecto'
               td= d.estado
-              td
-                a(href='/donanteCorporativo/' + d._id + '/editar') Editar
-                form(action='/donanteCorporativo/eliminar' method='POST' onsubmit="return confirm('¿Está seguro de que desea eliminar este donante?');")
-                  input(type='hidden' name='idDonante' value=d._id)
-                  button(type='submit') Eliminar
+              if usuario && usuario.rol === 'admin'
+                td
+                  a(href='/donantes-corporativos/' + d._id + '/editar') Editar
+                  |  | 
+                  form(action='/donantes-corporativos/eliminar' method='POST' style='display:inline;' onsubmit="return confirm('¿Está seguro de que desea eliminar este donante?');")
+                    input(type='hidden' name='idDonante' value=d._id)
+                    button(type='submit') Eliminar
+      if usuario && usuario.rol === 'admin'
+        p
+          a(href="/donantes-corporativos/eliminar") Formulario de baja por ID
     else
       p No hay donantes corporativos registrados.

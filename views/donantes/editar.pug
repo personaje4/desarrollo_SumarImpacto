@@ -2,9 +2,12 @@ doctype html
 html(lang='es')
   head
     meta(charset='UTF-8')
-    title Editar donante
+    title Editar Donante - SumarImpacto
   body
+    include ../_nav.pug
+
     h1 Editar donante corporativo
-    form(action='/donanteCorporativo/' + donante._id + '/editar' method='POST')
+    form(action='/donantes-corporativos/' + donante._id + '/editar' method='POST')
       include _formulario.pug
-    a(href='/donanteCorporativo') Volver al listado
+    p
+      a(href='/donantes-corporativos') Volver al listado
