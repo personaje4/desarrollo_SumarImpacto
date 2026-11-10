@@ -7,8 +7,17 @@ const PORT = process.env.PORT || 3000;
 const proyectoRoutes = require("./routes/proyectoRoutes");
 const donanteCorporativoRoutes = require("./routes/donanteCorporativoRoutes");
 
+// Importar tus middlewares de error
+const { 
+  capturarJsonInvalido, 
+  rutaNoEncontrada, 
+  manejadorErrores 
+} = require("./middlewares/errorMiddleware");
+
+
 // Middleware para procesar JSON y formularios HTML
 app.use(express.json());
+app.use(capturarJsonInvalido);
 app.use(express.urlencoded({ extended: true }));
 
 // Configurar motor de plantillas Pug
@@ -23,6 +32,13 @@ app.get("/", (req, res) => {
 // usar rutas agrupadas
 app.use("/proyecto", proyectoRoutes);
 app.use("/donanteCorporativo", donanteCorporativoRoutes);
+app.use("/donantes-corporativos", donanteCorporativoRoutes);
+
+// 5. Middleware de rutas inexistentes (404)
+app.use(rutaNoEncontrada);
+
+// 6. Middleware centralizado de errores (500, 400, 409)
+app.use(manejadorErrores);
 
 async function iniciarServidor() {
   try {
