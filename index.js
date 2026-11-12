@@ -6,6 +6,12 @@ const proyectoRoutes = require("./routes/proyectoRoutes");
 const donanteCorporativoRoutes = require("./routes/donanteCorporativoRoutes");
 const { protegerRuta } = require("./middlewares/authMiddleware");
 
+const {
+    capturarJsonInvalido,
+    rutaNoEncontrada,
+    manejadorErrores
+} = require("./middlewares/errorMiddleware");
+
 dotenv.config();
 
 const app = express();
@@ -13,6 +19,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json()); // Middleware para JSON
+app.use(capturarJsonInvalido);
 
 // Middleware para formularios HTML
 app.use(express.urlencoded({ extended: true }));
@@ -30,6 +37,9 @@ app.get("/", protegerRuta, (req, res) => {
 app.use("/", authRoutes);
 app.use("/proyecto", protegerRuta, proyectoRoutes);
 app.use("/donantes-corporativos", protegerRuta, donanteCorporativoRoutes);
+
+app.use(rutaNoEncontrada);
+app.use(manejadorErrores);
 
 async function iniciar() {
     await conectarDB(); 
