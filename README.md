@@ -6,7 +6,7 @@ Base de trabajo derivada del ZIP de la segunda entrega. Versión de preparación
 
 ## Estado actual
 
-El CRUD y las validaciones de V2 se conservan. Esta primera etapa incorpora instrucciones para Atlas y un comando de comprobación de conexión. Angel verificó la conexión, el alta de un proyecto y un donante vinculado, y la persistencia tras reiniciar la aplicación. Ver el [registro de pruebas](docs/VERIFICACION_ETAPA_1.md#verificación-manual-en-atlas). Quedan pendientes autenticación, autorización, middlewares, vistas y despliegue.
+El CRUD y las validaciones de V2 se conservan. Esta primera etapa incorpora instrucciones para Atlas y un comando de comprobación de conexión. Angel verificó la conexión, el alta de un proyecto y un donante vinculado, y la persistencia tras reiniciar la aplicación. Ver el [registro de pruebas](docs/VERIFICACION_ETAPA_1.md#verificación-manual-en-atlas). La tercera entrega incorpora autenticación, autorización por rol, middlewares y vistas Pug. La aplicación está desplegada en Render y utiliza MongoDB Atlas.
 
 ## Instalación y ejecución
 
@@ -56,11 +56,11 @@ Ambos módulos mantienen GET de listado y consulta, POST de alta, PUT de actuali
 | Base | Consulta y escritura individual |
 |---|---|
 | /proyecto | /proyecto/:idProyecto |
-| /donanteCorporativo | /donanteCorporativo/:idDonante |
+| /donantes-corporativos | /donantes-corporativos/:idDonante |
 
 Para usar JSON desde Postman enviar `Accept: application/json` y, en escrituras JSON, `Content-Type: application/json`. Se mantienen los códigos 200, 201, 400, 404, 409 y 500 del CRUD y las redirecciones 302 de formularios.
 
-Los campos, esquemas, relación donante–proyecto, cuerpos y ejemplos completos se conservan en [la documentación de V2](docs/README_SEGUNDA_ENTREGA.md#modelo-de-datos). Sus comandos iniciales de descarga y resultados anteriores corresponden a V2; para instalar esta copia usar las instrucciones de este README. El control de acceso cambiará estas rutas en una etapa posterior.
+Los campos, esquemas, relación donante–proyecto, cuerpos y ejemplos completos se conservan en [la documentación de V2](docs/README_SEGUNDA_ENTREGA.md#modelo-de-datos). Sus comandos iniciales de descarga y resultados anteriores corresponden a V2; para instalar esta copia usar las instrucciones de este README. Las rutas de proyectos y donantes requieren iniciar sesión. Las operaciones de alta, edición y baja están reservadas al administrador.
 
 ## Verificación
 
@@ -90,3 +90,14 @@ Cada autor prueba y documenta su parte. Ver [alcance de la primera etapa](docs/E
 ## Referencias
 
 D3 sección 7 (async/await), D6 secciones 5, 6, 8.2, 9 y 11 (Express, middlewares, Pug, errores y MVC), D8 secciones 8, 13 y 14 (relaciones y Mongoose); consigna final de tercera entrega. Para Atlas, fuentes oficiales enlazadas en su guía. Los documentos DIAGNOSTICO_TP2 e INTEGRACION_* del ZIP son antecedentes de la segunda entrega.
+
+## Despliegue y prueba manual de roles
+
+- [Aplicación en Render](https://desarrollo-sumarimpacto.onrender.com)
+- Rama `integracion-tp3`, commit desplegado `45069df`, con MongoDB Atlas.
+- Prueba manual realizada el 12 de noviembre de 2026.
+
+| Rol | Resultado observado |
+|---|---|
+| Lector | Inició sesión y consultó el proyecto «Prueba Atlas» y su donante vinculado. El listado no mostró acciones de alta, edición ni baja. |
+| Administrador | Inició sesión y vio las opciones para registrar, editar y eliminar proyectos. |
