@@ -36,10 +36,27 @@ function responderError(res, error) {
     if (status === 500) console.error(error);
     return res.status(status).json({ mensaje: status === 500 ? 'Error al procesar el proyecto' : error.message });
 }
+async function filtroProyectosVisibles(usuario) {
+    if (usuario?.rol === 'admin') return {};
 
+    if (usuario?.rol !== 'lector' || !usuario.donanteCorporativo) {
+        const error = new Error('La cuenta no tiene un donante corporativo vinculado');
+        error.status = 403;
+        throw error;
+    }
+
+    const donante = await Donante.findById(usuario.donanteCorporativo)
+        .select('proyectoAsignado')
+        .lean();
+
+    if (!donante?.proyectoAsignado) return { _id: { $in: [] } };
+
+    return { _id: donante.proyectoAsignado };
+}
 const obtenerProyecto = async (req, res) => {
     try {
-        const proyectos = await Proyecto.find().sort({ idProyecto: 1 });
+        const filtro = await filtroProyectosVisibles(req.usuario);
+        const proyectos = await Proyecto.find(filtro).sort({ idProyecto: 1 });
         if (esWeb(req)) return res.render('proyectos/listar', { proyectos });
         return res.json(proyectos);
     } catch (error) { return responderError(res, error); }
@@ -47,7 +64,10 @@ const obtenerProyecto = async (req, res) => {
 
 const obtenerProyectoPorId = async (req, res) => {
     try {
-        const proyecto = await Proyecto.findOne(filtroId(req.params.idProyecto));
+        const filtro = await filtroProyectosVisibles(req.usuario);
+        const proyecto = await Proyecto.findOne({
+            $and: [filtroId(req.params.idProyecto), filtro]
+        });
         if (!proyecto) return res.status(404).json({ mensaje: 'Proyecto no encontrado' });
         return res.json(proyecto);
     } catch (error) { return responderError(res, error); }
@@ -103,6 +123,7 @@ const eliminarProyecto = async (req, res) => {
     } catch (error) { return responderError(res, error); }
 };
 
-module.exports = { obtenerProyecto, obtenerProyectoPorId, obtenerProyectoEditar,
-    crearProyecto, actualizarProyecto, eliminarProyecto };
-
+module.exports = {
+    obtenerProyecto, obtenerProyectoPorId, obtenerProyectoEditar,
+    crearProyecto, actualizarProyecto, eliminarProyecto
+};

@@ -4,11 +4,14 @@ html(lang="es")
     meta(charset="UTF-8")
     title SumarImpacto - Inicio
   body
+    include _nav.pug
+
     h1 Sistema de Gestión SumarImpacto
     p ¡Bienvenido/a al sistema de gestión de proyectos y donantes!
-    nav
-      ul
-        li
-          a(href="/proyecto") Ver Proyectos
-        li
-          a(href="/donanteCorporativo") Ver Donantes Corporativos
+
+    h3 Accesos rápidos:
+    ul
+      li
+        a(href="/proyecto") Gestionar Proyectos
+      li
+        a(href="/donantes-corporativos") Gestionar Donantes Corporativos

@@ -4,21 +4,24 @@ html(lang="es")
     meta(charset="UTF-8")
     title Proyectos - SumarImpacto
   body
+    include ../_nav.pug
+
     - const formatearFecha = valor => valor ? new Date(valor).toLocaleDateString('es-AR', { timeZone: 'UTC', day: '2-digit', month: '2-digit', year: 'numeric' }) : ''
+
     h1 Listado de Proyectos Solidarios
-    p
-      a(href="/proyecto/nuevo") + Registrar Nuevo Proyecto
-    p
-      a(href="/proyecto/eliminar") - Eliminar un Proyecto
-    p
-      a(href="/") ← Volver al Inicio
+
+    if usuario && usuario.rol === 'admin'
+      p
+        a(href="/proyecto/nuevo") + Registrar Nuevo Proyecto
+      p
+        a(href="/proyecto/eliminar") - Eliminar un Proyecto por ID
 
     if proyectos && proyectos.length > 0
       table(border="1" cellpadding="5" cellspacing="0")
         thead
           tr
             th ID MongoDB
-            th Número de proyecto
+            th Número
             th Nombre
             th Descripción
             th Organización
@@ -27,7 +30,8 @@ html(lang="es")
             th Fecha Inicio
             th Fecha Fin
             th Estado
-            th Acciones
+            if usuario && usuario.rol === 'admin'
+              th Acciones
         tbody
           each p in proyectos
             tr
@@ -41,8 +45,8 @@ html(lang="es")
               td= formatearFecha(p.fechaInicio)
               td= formatearFecha(p.fechaFin)
               td= p.estado
-              td
-                a(href="/proyecto/" + p._id + "/editar") Editar
+              if usuario && usuario.rol === 'admin'
+                td
+                  a(href="/proyecto/" + p._id + "/editar") Editar
     else
       p No hay proyectos registrados actualmente.
-

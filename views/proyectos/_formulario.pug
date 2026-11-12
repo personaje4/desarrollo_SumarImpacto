@@ -4,6 +4,8 @@ html(lang="es")
     meta(charset="UTF-8")
     title= proyecto ? "Editar Proyecto - SumarImpacto" : "Nuevo Proyecto - SumarImpacto"
   body
+    include ../_nav.pug
+
     h1= proyecto ? "Editar Proyecto Solidario" : "Registrar Nuevo Proyecto Solidario"
     form(action=proyecto ? "/proyecto/" + proyecto._id + "/editar" : "/proyecto" method="POST")
       div

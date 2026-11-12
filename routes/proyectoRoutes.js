@@ -1,17 +1,18 @@
-const express = require('express');
-const router = express.Router();
-const { obtenerProyecto, obtenerProyectoPorId, obtenerProyectoEditar,
-    crearProyecto, actualizarProyecto, eliminarProyecto } = require('../controllers/proyectoController');
+const { Router } = require('express');
+const c = require('../controllers/proyectoController');
+const { soloAdmin } = require('../middlewares/authMiddleware');
 
-router.get('/', obtenerProyecto);
-router.get('/nuevo', (req, res) => res.render('proyectos/nuevo'));
-router.get('/eliminar', (req, res) => res.render('proyectos/eliminar'));
-router.post('/eliminar', eliminarProyecto);
-router.get('/:idProyecto/editar', obtenerProyectoEditar);
-router.post('/:idProyecto/editar', actualizarProyecto);
-router.get('/:idProyecto', obtenerProyectoPorId);
-router.post('/', crearProyecto);
-router.put('/:idProyecto', actualizarProyecto);
-router.delete('/:idProyecto', eliminarProyecto);
+const router = Router();
+
+router.get('/', c.obtenerProyecto);
+router.get('/nuevo', soloAdmin, (req, res) => res.render('proyectos/nuevo'));
+router.get('/eliminar', soloAdmin, (req, res) => res.render('proyectos/eliminar'));
+router.post('/eliminar', soloAdmin, c.eliminarProyecto);
+router.get('/:idProyecto/editar', soloAdmin, c.obtenerProyectoEditar);
+router.post('/:idProyecto/editar', soloAdmin, c.actualizarProyecto);
+router.get('/:idProyecto', c.obtenerProyectoPorId);
+router.post('/', soloAdmin, c.crearProyecto);
+router.put('/:idProyecto', soloAdmin, c.actualizarProyecto);
+router.delete('/:idProyecto', soloAdmin, c.eliminarProyecto);
 
 module.exports = router;

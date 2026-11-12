@@ -1,13 +1,25 @@
-const router = require('express').Router();
+const { Router } = require('express');
 const c = require('../controllers/donanteCorporativoController');
+const { soloAdmin } = require('../middlewares/authMiddleware');
+
+const router = Router();
+
+// Lectura: cualquier usuario logueado
 router.get('/', c.obtenerDonanteCorporativo);
-router.get('/nuevo', c.formularioDonante);
-router.get('/eliminar', (req, res) => res.render('donantes/eliminar'));
-router.post('/eliminar', c.eliminarDonanteCorporativo);
-router.get('/:idDonante/editar', c.formularioDonante);
-router.post('/:idDonante/editar', c.actualizarDonanteCorporativo);
+
+// Escritura: solo admin
+router.get('/nuevo', soloAdmin, c.formularioDonante);
+router.get('/eliminar', soloAdmin, (req, res) => res.render('donantes/eliminar'));
+router.post('/eliminar', soloAdmin, c.eliminarDonanteCorporativo);
+router.get('/:idDonante/editar', soloAdmin, c.formularioDonante);
+router.post('/:idDonante/editar', soloAdmin, c.actualizarDonanteCorporativo);
+
+// Lectura
 router.get('/:idDonante', c.obtenerDonanteCorporativoPorId);
-router.post('/', c.crearDonanteCorporativo);
-router.put('/:idDonante', c.actualizarDonanteCorporativo);
-router.delete('/:idDonante', c.eliminarDonanteCorporativo);
+
+// Escritura: solo admin
+router.post('/', soloAdmin, c.crearDonanteCorporativo);
+router.put('/:idDonante', soloAdmin, c.actualizarDonanteCorporativo);
+router.delete('/:idDonante', soloAdmin, c.eliminarDonanteCorporativo);
+
 module.exports = router;

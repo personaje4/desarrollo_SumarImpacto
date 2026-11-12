@@ -1,0 +1,17 @@
+header(style="margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 1px solid #ccc;")
+  nav(style="display: flex; justify-content: space-between; align-items: center;")
+    div
+      strong SumarImpacto
+      |  |
+      a(href="/") Inicio
+      |  |
+      a(href="/proyecto") Proyectos
+      |  |
+      a(href="/donantes-corporativos") Donantes Corporativos
+    div
+      if usuario
+        span Hola, #{usuario.nombre || "Usuario"} (Rol: #{usuario.rol})
+        form(action="/logout" method="POST" style="display: inline; margin-left: 10px;")
+          button(type="submit") Cerrar sesión
+      else
+        a(href="/login") Iniciar sesión
