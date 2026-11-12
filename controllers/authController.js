@@ -1,5 +1,5 @@
 const crypto = require("crypto"); // Módulo nativo de Node.js para operaciones criptográficas y generación de tokens seguros.
-const Usuario = require("../models/Usuario"); // Modelo de Usuario para interactuar con MongoDB.
+const usuario = require("../models/usuario"); // Modelo de Usuario para interactuar con MongoDB.
 
 const mostrarLogin = (req, res) => {
   res.render("login", { // Muestra la vista de inicio de sesión.
@@ -13,7 +13,7 @@ const mostrarRegistro = (req, res) => {
   });
 };
 
-const registrarUsuario = async (req, res) => {
+const registrarusuario = async (req, res) => {
   try {
     const { nombre, email, password } = req.body; // Obtiene los datos enviados desde el formulario.
 
@@ -22,7 +22,7 @@ const registrarUsuario = async (req, res) => {
         error: "Todos los campos son obligatorios" // Valida que todos los campos estén completos.
       });
     }
-    const usuarioExiste = await Usuario.findOne({ email }); // Busca si ya existe un usuario con ese email.
+    const usuarioExiste = await usuario.findOne({ email }); // Busca si ya existe un usuario con ese email.
 
     if (usuarioExiste) {
       return res.render("registro", {
@@ -30,9 +30,9 @@ const registrarUsuario = async (req, res) => {
       });
     }
 
-    const { salt, passwordHash } = Usuario.crearPasswordSeguro(password); // Genera el salt y el hash seguro de la contraseña.
+    const { salt, passwordHash } = usuario.crearPasswordSeguro(password); // Genera el salt y el hash seguro de la contraseña.
 
-    await Usuario.create({
+    await usuario.create({
       nombre,
       email,
       passwordHash, // Guarda el hash en lugar de la contraseña real.
@@ -53,7 +53,7 @@ const iniciarSesion = async (req, res) => {
   try {
     const { email, password } = req.body; // Obtiene email y contraseña ingresados.
 
-    const usuario = await Usuario.findOne({ email }); // Busca el usuario por email.
+    const usuario = await usuario.findOne({ email }); // Busca el usuario por email.
     if (!usuario || !usuario.validarPassword(password)) {
       return res.render("login", {
         error: "Email o password incorrectos" // Verifica que las credenciales sean válidas.
@@ -94,7 +94,7 @@ const cerrarSesion = async (req, res) => {
 module.exports = {
   mostrarLogin,
   mostrarRegistro,
-  registrarUsuario,
+  registrarusuario,
   iniciarSesion,
   cerrarSesion
 };

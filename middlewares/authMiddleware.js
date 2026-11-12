@@ -1,4 +1,4 @@
-const Usuario = require("../models/Usuario");
+const usuario = require("../models/usuario");
 
 const leerCookies = (req) => {
   const header = req.headers.cookie; // Obtiene todas las cookies enviadas por el navegador.
@@ -23,7 +23,7 @@ const protegerRuta = async (req, res, next) => { // Middleware que protege rutas
     return res.redirect("/login"); // Si no hay sesión, redirige al login.
   }
 
-  const usuario = await Usuario.findOne({ sesionToken }); // Busca el usuario asociado al token.
+  const usuario = await usuario.findOne({ sesionToken }); // Busca el usuario asociado al token.
 
   if (!usuario) {
     res.clearCookie("sesion"); // Elimina la cookie inválida.
