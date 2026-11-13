@@ -24,7 +24,6 @@ html(lang="es")
         thead
           tr
             th ID MongoDB
-            th Número
             th Nombre
             th Descripción
             th Organización
@@ -39,7 +38,6 @@ html(lang="es")
           each p in proyectos
             tr
               td= p._id
-              td= p.idProyecto
               td= p.nombre
               td= p.descripcion
               td= p.organizacion
