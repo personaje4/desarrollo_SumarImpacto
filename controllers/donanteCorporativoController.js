@@ -33,7 +33,7 @@ async function datosDonante(body = {}) {
     return datos;
 }
 const leerId = req => req.params.idDonante || req.params.idDonanteCorporativo || req.body?.idDonante;
-const obtenerDonanteCorporativo = async (req, res) => {
+const obtenerDonanteCorporativo = async (req, res, next) => {
     try {
         const donantes = await Donante.find(filtroDonantesVisibles(req.usuario))
             .populate('proyectoAsignado')
@@ -41,25 +41,33 @@ const obtenerDonanteCorporativo = async (req, res) => {
         return esWeb(req)
             ? res.render('donantes/listar', { donantes })
             : res.json(donantes);
-    } catch (err) { return errorRespuesta(res, err); }
+    } catch (err) {
+        if (err.code === 'DONANTE_NO_VINCULADO') return next(err);
+        return errorRespuesta(res, err);
+    }
 };
 function filtroDonantesVisibles(usuario) {
     if (usuario?.rol === 'admin') return {};
 
     if (usuario?.rol !== 'lector' || !usuario.donanteCorporativo) {
-        throw fallo('La cuenta no tiene un donante corporativo vinculado', 403);
+        const error = fallo('La cuenta no tiene un donante corporativo vinculado', 403);
+        error.code = 'DONANTE_NO_VINCULADO';
+        throw error;
     }
 
     return { _id: usuario.donanteCorporativo };
 }
-const obtenerDonanteCorporativoPorId = async (req, res) => {
+const obtenerDonanteCorporativoPorId = async (req, res, next) => {
     try {
         const donante = await Donante.findOne({
             $and: [filtroId(leerId(req)), filtroDonantesVisibles(req.usuario)]
         }).populate('proyectoAsignado');
         if (!donante) throw fallo('Donante corporativo no encontrado', 404);
         return res.json(donante);
-    } catch (err) { return errorRespuesta(res, err); }
+    } catch (err) {
+        if (err.code === 'DONANTE_NO_VINCULADO') return next(err);
+        return errorRespuesta(res, err);
+    }
 };
 const formularioDonante = async (req, res) => {
     try {

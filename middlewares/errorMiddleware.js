@@ -24,6 +24,15 @@ const rutaNoEncontrada = (req, res, next) => {
 
 // 3. Manejador centralizado de errores
 const manejadorErrores = (err, req, res, next) => {
+    if (err.code === 'DONANTE_NO_VINCULADO') {
+        const aceptaHtml = /(?:^|,)\s*text\/html\s*(?:;|,|$)/i.test(req.get('Accept') || '');
+        res.vary('Accept');
+        if (aceptaHtml && !req.is('application/json') && req.accepts(['html', 'json']) === 'html') {
+            return res.status(403).render('donantes/sinVincular');
+        }
+        return res.status(403).json({ mensaje: err.message });
+    }
+
     // Clave duplicada en Mongo (ej: CUIT duplicado o idProyecto repetido)
     if (err.code === 11000) {
         const campo = Object.keys(err.keyPattern || {})[0] || 'campo';

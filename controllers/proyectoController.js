@@ -42,6 +42,7 @@ async function filtroProyectosVisibles(usuario) {
     if (usuario?.rol !== 'lector' || !usuario.donanteCorporativo) {
         const error = new Error('La cuenta no tiene un donante corporativo vinculado');
         error.status = 403;
+        error.code = 'DONANTE_NO_VINCULADO';
         throw error;
     }
 
@@ -53,16 +54,19 @@ async function filtroProyectosVisibles(usuario) {
 
     return { _id: donante.proyectoAsignado };
 }
-const obtenerProyecto = async (req, res) => {
+const obtenerProyecto = async (req, res, next) => {
     try {
         const filtro = await filtroProyectosVisibles(req.usuario);
         const proyectos = await Proyecto.find(filtro).sort({ idProyecto: 1 });
         if (esWeb(req)) return res.render('proyectos/listar', { proyectos });
         return res.json(proyectos);
-    } catch (error) { return responderError(res, error); }
+    } catch (error) {
+        if (error.code === 'DONANTE_NO_VINCULADO') return next(error);
+        return responderError(res, error);
+    }
 };
 
-const obtenerProyectoPorId = async (req, res) => {
+const obtenerProyectoPorId = async (req, res, next) => {
     try {
         const filtro = await filtroProyectosVisibles(req.usuario);
         const proyecto = await Proyecto.findOne({
@@ -70,7 +74,10 @@ const obtenerProyectoPorId = async (req, res) => {
         });
         if (!proyecto) return res.status(404).json({ mensaje: 'Proyecto no encontrado' });
         return res.json(proyecto);
-    } catch (error) { return responderError(res, error); }
+    } catch (error) {
+        if (error.code === 'DONANTE_NO_VINCULADO') return next(error);
+        return responderError(res, error);
+    }
 };
 
 const obtenerProyectoEditar = async (req, res) => {
