@@ -1,0 +1,26 @@
+.formulario-registro {
+  display: grid;
+  gap: .85rem;
+  max-width: 34rem;
+}
+.formulario-registro label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: .25rem;
+}
+.formulario-registro input,
+.formulario-registro select,
+.formulario-registro textarea {
+  box-sizing: border-box;
+  width: 100%;
+  padding: .45rem .55rem;
+  font: inherit;
+}
+.formulario-registro textarea {
+  min-height: 5rem;
+  resize: vertical;
+}
+.formulario-registro button {
+  justify-self: start;
+  padding: .4rem .7rem;
+}

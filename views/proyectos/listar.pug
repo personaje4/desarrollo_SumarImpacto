@@ -52,5 +52,9 @@ html(lang="es")
               if usuario && usuario.rol === 'admin'
                 td
                   a(href="/proyecto/" + p._id + "/editar") Editar
+                  |  |
+                  form(action="/proyecto/eliminar" method="POST" style="display:inline;" onsubmit="return confirm('¿Está seguro de que desea eliminar este proyecto?');")
+                    input(type="hidden" name="idProyecto" value=p._id)
+                    button(type="submit") Eliminar
     else
       p No hay proyectos registrados actualmente.

@@ -1,13 +1,14 @@
 doctype html
 html(lang='es')
   head
+    link(rel="stylesheet" href="/formularios.css")
     meta(charset='UTF-8')
     title Registrar Donante - SumarImpacto
   body
     include ../_nav.pug
 
     h1 Registrar donante corporativo
-    form(action='/donantes-corporativos' method='POST')
+    form.formulario-registro(action='/donantes-corporativos' method='POST')
       include _formulario.pug
     p
       a(href='/donantes-corporativos') Volver al listado
