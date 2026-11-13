@@ -17,8 +17,6 @@ html(lang="es")
     if usuario && usuario.rol === 'admin'
       p
         a(href="/proyecto/nuevo") + Registrar Nuevo Proyecto
-      p
-        a(href="/proyecto/eliminar") - Eliminar un Proyecto por ID
 
     if proyectos && proyectos.length > 0
       table(border="1" cellpadding="5" cellspacing="0")
@@ -58,3 +56,7 @@ html(lang="es")
                     button(type="submit") Eliminar
     else
       p No hay proyectos registrados actualmente.
+
+    if esAdministrador
+      p
+        a(href="/proyecto/eliminar") Eliminar por ID

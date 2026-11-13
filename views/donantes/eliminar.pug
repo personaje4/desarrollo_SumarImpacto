@@ -1,16 +1,5 @@
-doctype html
-html(lang='es')
-  head
-    meta(charset='UTF-8')
-    title Eliminar Donante - SumarImpacto
-  body
-    include ../_nav.pug
-
-    h1 Eliminar donante corporativo
-    form(action='/donantes-corporativos/eliminar' method='POST' onsubmit="return confirm('¿Está seguro de que desea eliminar este donante?');")
-      div(style="margin-bottom: 1rem;")
-        label(for='idDonante') ID del Donante (Mongoose _id):
-        input(type='text' name='idDonante' id='idDonante' required placeholder="Ej: 64b8f...a1c")
-      button(type='submit') Eliminar
-    p
-      a(href='/donantes-corporativos') Volver al listado
+-
+  const titulo = 'Eliminar donante corporativo por ID'
+  const rutaListado = '/donantes-corporativos'
+  const campoId = 'idDonante'
+include ../_eliminarPorId.pug

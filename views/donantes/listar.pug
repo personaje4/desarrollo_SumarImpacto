@@ -64,8 +64,9 @@ html(lang='es')
                     form(action='/donantes-corporativos/eliminar' method='POST' style='display:inline;' onsubmit="return confirm('¿Está seguro de que desea eliminar este donante?');")
                       input(type='hidden' name='idDonante' value=d._id)
                       button(type='submit') Eliminar
-        if usuario && usuario.rol === 'admin'
-          p
-            a(href="/donantes-corporativos/eliminar") Formulario de baja por ID
       else
         p No hay donantes corporativos registrados.
+
+      if esAdministrador
+        p
+          a(href="/donantes-corporativos/eliminar") Eliminar por ID

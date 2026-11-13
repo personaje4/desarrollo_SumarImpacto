@@ -1,0 +1,18 @@
+doctype html
+html(lang="es")
+  head
+    meta(charset="UTF-8")
+    title= titulo + " - SumarImpacto"
+    link(rel="stylesheet" href="/formularios.css")
+  body
+    include _nav.pug
+
+    h1= titulo
+    p Copiá el ID MongoDB del registro desde el listado.
+    form.formulario-registro(action=rutaListado + "/eliminar" method="POST" onsubmit="return confirm('¿Confirmás la eliminación de este registro?');")
+      div
+        label(for=campoId) ID MongoDB
+        input(type="text" id=campoId name=campoId required)
+      button(type="submit") Eliminar
+    p
+      a(href=rutaListado) Volver al listado

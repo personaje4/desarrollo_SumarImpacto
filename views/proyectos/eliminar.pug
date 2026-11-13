@@ -1,18 +1,5 @@
-doctype html
-html(lang="es")
-  head
-    meta(charset="UTF-8")
-    title Eliminar Proyecto - SumarImpacto
-  body
-    include ../_nav.pug
-
-    h1 Eliminar un Proyecto
-    p
-      a(href="/proyecto") ← Volver al Listado
-
-    form(action="/proyecto/eliminar" method="POST" onsubmit="return confirm('¿Está seguro de que desea eliminar este proyecto?');")
-      div
-        label(for="idProyecto") ID del Proyecto (Mongoose _id):
-        input(type="text" id="idProyecto" name="idProyecto" required placeholder="Ej: 64b8f...a1c")
-      br
-      button(type="submit") Eliminar Proyecto
+-
+  const titulo = 'Eliminar proyecto por ID'
+  const rutaListado = '/proyecto'
+  const campoId = 'idProyecto'
+include ../_eliminarPorId.pug
