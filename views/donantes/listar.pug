@@ -9,18 +9,25 @@ html(lang='es')
     if usuario && usuario.rol === 'lector'
       h1 Resumen de mis donaciones
       if donantes && donantes.length
-        each donante in donantes
-          dl
-            dt Razón social
-            dd= donante.razonSocial
-            dt Monto total donado
-            dd= donante.montoTotalDonado
-            dt Moneda
-            dd= donante.moneda
-            dt Proyecto asignado
-            dd= donante.proyectoAsignado ? donante.proyectoAsignado.nombre : 'Sin proyecto asignado'
+        table(border='1' cellpadding='8' cellspacing='0')
+          thead
+            tr
+              th(scope='col') Razón social
+              th(scope='col') Monto total donado
+              th(scope='col') Moneda
+              th(scope='col') Proyecto asignado
+          tbody
+            each donante in donantes
+              tr
+                td= donante.razonSocial
+                td= donante.montoTotalDonado
+                td= donante.moneda
+                td= donante.proyectoAsignado && donante.proyectoAsignado.nombre || 'Sin proyecto asignado'
       else
         p No hay datos de donaciones para tu cuenta.
+
+      p
+        a(href='/proyecto') Ver listado de proyectos
     else
       h1 Donantes corporativos
 

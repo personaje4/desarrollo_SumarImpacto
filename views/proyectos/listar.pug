@@ -10,6 +10,10 @@ html(lang="es")
 
     h1 Listado de Proyectos Solidarios
 
+    if esDonanteCorporativo
+      p
+        a(href='/donantes-corporativos') Volver a mis donaciones
+
     if usuario && usuario.rol === 'admin'
       p
         a(href="/proyecto/nuevo") + Registrar Nuevo Proyecto
