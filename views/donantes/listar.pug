@@ -2,47 +2,63 @@ doctype html
 html(lang='es')
   head
     meta(charset='UTF-8')
-    title Donantes corporativos - SumarImpacto
+    title= usuario && usuario.rol === 'lector' ? 'Mis donaciones - SumarImpacto' : 'Donantes corporativos - SumarImpacto'
   body
     include ../_nav.pug
 
-    h1 Donantes corporativos
+    if usuario && usuario.rol === 'lector'
+      h1 Resumen de mis donaciones
+      if donantes && donantes.length
+        each donante in donantes
+          dl
+            dt Razón social
+            dd= donante.razonSocial
+            dt Monto total donado
+            dd= donante.montoTotalDonado
+            dt Moneda
+            dd= donante.moneda
+            dt Proyecto asignado
+            dd= donante.proyectoAsignado ? donante.proyectoAsignado.nombre : 'Sin proyecto asignado'
+      else
+        p No hay datos de donaciones para tu cuenta.
+    else
+      h1 Donantes corporativos
 
-    if usuario && usuario.rol === 'admin'
-      p
-        a(href='/donantes-corporativos/nuevo') + Registrar donante
-
-    if donantes && donantes.length
-      table(border='1' cellpadding='5' cellspacing='0')
-        thead
-          - const columnas = ['ID MongoDB','ID histórico','Razón social','CUIT','Rubro','Contacto','Email','Monto','Moneda','Proyecto','Estado']
-          - if (usuario && usuario.rol === 'admin') columnas.push('Acciones')
-          tr
-            each titulo in columnas
-              th= titulo
-        tbody
-          each d in donantes
-            tr
-              td= d._id
-              td= d.idDonanteCorporativo || '—'
-              td= d.razonSocial
-              td= d.cuit
-              td= d.rubro
-              td= d.personaContacto
-              td= d.emailContacto
-              td= d.montoTotalDonado
-              td= d.moneda
-              td= d.proyectoAsignado ? (d.proyectoAsignado.nombre || d.proyectoAsignado) : 'Sin proyecto'
-              td= d.estado
-              if usuario && usuario.rol === 'admin'
-                td
-                  a(href='/donantes-corporativos/' + d._id + '/editar') Editar
-                  |  |
-                  form(action='/donantes-corporativos/eliminar' method='POST' style='display:inline;' onsubmit="return confirm('¿Está seguro de que desea eliminar este donante?');")
-                    input(type='hidden' name='idDonante' value=d._id)
-                    button(type='submit') Eliminar
       if usuario && usuario.rol === 'admin'
         p
-          a(href="/donantes-corporativos/eliminar") Formulario de baja por ID
-    else
-      p No hay donantes corporativos registrados.
+          a(href='/donantes-corporativos/nuevo') + Registrar donante
+
+      if donantes && donantes.length
+        table(border='1' cellpadding='5' cellspacing='0')
+          thead
+            - const columnas = ['ID MongoDB','ID histórico','Razón social','CUIT','Rubro','Contacto','Email','Monto','Moneda','Proyecto','Estado']
+            - if (usuario && usuario.rol === 'admin') columnas.push('Acciones')
+            tr
+              each titulo in columnas
+                th= titulo
+          tbody
+            each d in donantes
+              tr
+                td= d._id
+                td= d.idDonanteCorporativo || '—'
+                td= d.razonSocial
+                td= d.cuit
+                td= d.rubro
+                td= d.personaContacto
+                td= d.emailContacto
+                td= d.montoTotalDonado
+                td= d.moneda
+                td= d.proyectoAsignado ? (d.proyectoAsignado.nombre || d.proyectoAsignado) : 'Sin proyecto'
+                td= d.estado
+                if usuario && usuario.rol === 'admin'
+                  td
+                    a(href='/donantes-corporativos/' + d._id + '/editar') Editar
+                    |  |
+                    form(action='/donantes-corporativos/eliminar' method='POST' style='display:inline;' onsubmit="return confirm('¿Está seguro de que desea eliminar este donante?');")
+                      input(type='hidden' name='idDonante' value=d._id)
+                      button(type='submit') Eliminar
+        if usuario && usuario.rol === 'admin'
+          p
+            a(href="/donantes-corporativos/eliminar") Formulario de baja por ID
+      else
+        p No hay donantes corporativos registrados.

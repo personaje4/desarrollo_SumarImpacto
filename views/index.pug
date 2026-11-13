@@ -7,11 +7,15 @@ html(lang="es")
     include _nav.pug
 
     h1 Sistema de Gestión SumarImpacto
-    p ¡Bienvenido/a al sistema de gestión de proyectos y donantes!
-
-    h3 Accesos rápidos:
-    ul
-      li
-        a(href="/proyecto") Gestionar Proyectos
-      li
-        a(href="/donantes-corporativos") Gestionar Donantes Corporativos
+    if esAdministrador
+      p Gestioná los proyectos solidarios y los donantes corporativos.
+      ul
+        li
+          a(href="/proyecto") Gestionar proyectos
+        li
+          a(href="/donantes-corporativos") Gestionar donantes corporativos
+    else if esDonanteCorporativo
+      p
+        a(href="/donantes-corporativos") Ver mis donaciones
+    else if usuario && usuario.rol === 'lector'
+      p Tu cuenta todavía no está vinculada a un donante corporativo.

@@ -31,7 +31,11 @@ const protegerRuta = async (req, res, next) => { // Middleware que protege rutas
   }
 
   req.usuario = usuario; // Guarda el usuario autenticado en la petición.
-  res.locals.usuario = { nombre: usuario.nombre, rol: usuario.rol };
+  res.locals.usuario = {
+    nombre: usuario.nombre,
+    rol: usuario.rol,
+    tieneDonanteVinculado: Boolean(usuario.donanteCorporativo)
+  };
   next(); // Permite continuar hacia la ruta solicitada.
 };
 
