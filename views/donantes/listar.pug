@@ -1,6 +1,7 @@
 doctype html
 html(lang='es')
   head
+    link(rel="stylesheet" href="/formularios.css")
     meta(charset='UTF-8')
     title= usuario && usuario.rol === 'lector' ? 'Mis donaciones - SumarImpacto' : 'Donantes corporativos - SumarImpacto'
   body
@@ -9,7 +10,7 @@ html(lang='es')
     if usuario && usuario.rol === 'lector'
       h1 Resumen de mis donaciones
       if donantes && donantes.length
-        table(border='1' cellpadding='8' cellspacing='0')
+        table.listado-compacto(border="1")
           thead
             tr
               th(scope='col') Razón social
@@ -36,9 +37,9 @@ html(lang='es')
           a(href='/donantes-corporativos/nuevo') + Registrar donante
 
       if donantes && donantes.length
-        table(border='1' cellpadding='5' cellspacing='0')
+        table.listado-compacto(border="1")
           thead
-            - const columnas = ['ID MongoDB','ID histórico','Razón social','CUIT','Rubro','Contacto','Email','Monto','Moneda','Proyecto','Estado']
+            - const columnas = ['ID MongoDB','Razón social','CUIT','Rubro','Contacto','Email','Monto','Moneda','Proyecto','Estado']
             - if (usuario && usuario.rol === 'admin') columnas.push('Acciones')
             tr
               each titulo in columnas
@@ -47,7 +48,6 @@ html(lang='es')
             each d in donantes
               tr
                 td= d._id
-                td= d.idDonanteCorporativo || '—'
                 td= d.razonSocial
                 td= d.cuit
                 td= d.rubro

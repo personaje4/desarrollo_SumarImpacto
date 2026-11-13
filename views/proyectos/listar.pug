@@ -1,6 +1,7 @@
 doctype html
 html(lang="es")
   head
+    link(rel="stylesheet" href="/formularios.css")
     meta(charset="UTF-8")
     title Proyectos - SumarImpacto
   body
@@ -19,7 +20,7 @@ html(lang="es")
         a(href="/proyecto/nuevo") + Registrar Nuevo Proyecto
 
     if proyectos && proyectos.length > 0
-      table(border="1" cellpadding="5" cellspacing="0")
+      table.listado-compacto(border="1")
         thead
           tr
             th ID MongoDB
